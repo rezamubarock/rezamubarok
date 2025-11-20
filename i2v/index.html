@@ -179,7 +179,7 @@
                 <div>
                     <label class="block text-xs mb-1">CAMERA_MOTION</label>
                     <select id="cameraMotion" class="input-hacker w-full p-1 text-sm">
-                        <option value="Static, subtle movement">Static / Subtle</option>
+                        <option value="Static">Static / Fixed Camera</option>
                         <option value="Slow Zoom In">Slow Zoom In</option>
                         <option value="Quick Zoom Out">Quick Zoom Out</option>
                         <option value="Pan Right to Left">Pan Right</option>
@@ -428,9 +428,8 @@
                 else speedAdverb = "steadily";
 
                 // Construct Prompt for Gemini
-                // UPDATED PROMPT LOGIC: Strictly following BytePlus ModelArk Guidelines
-                // Ref: https://docs.byteplus.com/en/docs/modelark/1587797#tips-for-image-to-video-prompts
-                // Formula: Subject 1 + Movement 1 + Subject 2 + Movement 2
+                // UPDATED PROMPT LOGIC: Enhanced Environmental Detail
+                // Focus: Extracting more micro-movements from the image to avoid "too short" prompts
                 const systemPrompt = `
                     You are an expert AI Video Prompt Engineer. The user feels the previous prompts were too short.
                     
