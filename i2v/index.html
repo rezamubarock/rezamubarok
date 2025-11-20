@@ -432,22 +432,21 @@
                 // Ref: https://docs.byteplus.com/en/docs/modelark/1587797#tips-for-image-to-video-prompts
                 // Formula: Subject 1 + Movement 1 + Subject 2 + Movement 2
                 const systemPrompt = `
-                    You are an AI Video Prompt Expert following the BytePlus ModelArk guidelines.
+                    You are an expert AI Video Prompt Engineer. The user feels the previous prompts were too short.
                     
-                    STRICT RULES:
-                    1. NO Static Description: Do not describe the clothes, colors, or static background unless they change. The video model already sees the image.
-                    2. Formula: [Subject 1] + [Movement 1] + [Subject 2] + [Movement 2] + [Camera].
-                    3. Use Adverbs: The user set motion intensity to ${strength}/10, so use adverbs like "${speedAdverb}".
+                    YOUR GOAL: 
+                    Create a rich, dynamic scene by identifying MULTIPLE moving parts in the image.
                     
-                    TASK:
-                    Analyze the image to find the Main Subject and Environmental Elements (fire, water, smoke, hair, etc).
-                    Combine them with the User's Action: "${action}" and Camera: "${camera}".
+                    STEPS:
+                    1. Analyze the image for the Main Subject. Apply the user's action: "${action}".
+                    2. DEEP SCAN for "Secondary Motion": Look for hair blowing, fabric moving, trees swaying, blinking lights, dust particles, smoke, clouds, or water. Find at least 2-3 distinct elements.
+                    3. Use the motion intensity "${strength}/10" to determine how chaotic or calm these movements are (${speedAdverb}).
+                    
+                    STRICT FORMAT (One detailed paragraph):
+                    [Main Subject performs action ${speedAdverb} with specific facial/body details]. Meanwhile, [Secondary Element 1 moves/reacts], and [Secondary Element 2 moves/reacts]. The atmosphere is active with [Ambient Motion like dust/light/fog]. [Camera: ${camera}].
 
-                    OUTPUT FORMAT (Plain text, single sentence):
-                    [Main Subject] performs [User Action] ${speedAdverb}, [Background Element] moves/changes ${speedAdverb}, [Camera Instructions].
-
-                    Example:
-                    "The cybernetic warrior turns head ${speedAdverb} and blinks, neon rain in background falls ${speedAdverb}, camera slowly zooms in."
+                    Example Output:
+                    "The cyberpunk samurai turns his head ${speedAdverb} to the left with a stern expression. His long hair and loose coat flap ${speedAdverb} in the wind, while the neon signs in the background flicker erratically. Raindrops fall heavily across the lens. Camera slowly zooms in."
                 `;
 
                 log('ANALYZING PIXEL DATA...');
