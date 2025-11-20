@@ -421,6 +421,11 @@
                 const style = document.getElementById('stylePreset').value;
                 const strength = strengthSlider.value;
 
+                // Determine adverbs based on strength
+                let speedAdverb = "naturally";
+                if (strength <= 3) speedAdverb = "slowly and gently";
+                else if (strength >= 8) speedAdverb = "rapidly and intensely";
+                else speedAdverb = "steadily";
                 // Construct Prompt for Gemini
                 const systemPrompt = `
                     You are an AI Video Prompt Expert following the BytePlus ModelArk guidelines.
