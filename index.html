@@ -1,13 +1,357 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>my-hacker-site</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>./SYSTEM_ROOT/TOOLS</title>
+    <style>
+        /* --- 1. HACKER AESTHETIC CSS --- */
+        :root {
+            --bg-color: #000000;
+            --primary-color: #0f0; /* Neon Green */
+            --secondary-color: #003300;
+            --alert-color: #f00;
+            --font-stack: 'Courier New', Courier, monospace;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--primary-color);
+            font-family: var(--font-stack);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Matrix Rain Background */
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            opacity: 0.2;
+        }
+
+        /* Container Utama */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header & Secret Box */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 2px solid var(--primary-color);
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            text-transform: uppercase;
+            text-shadow: 0 0 10px var(--primary-color);
+            font-size: 1.5rem;
+        }
+
+        .cursor {
+            animation: blink 1s infinite;
+        }
+
+        /* Secret Input Box */
+        .secret-box {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .secret-input {
+            background: transparent;
+            border: 1px solid var(--secondary-color);
+            color: var(--primary-color);
+            padding: 5px;
+            font-family: var(--font-stack);
+            outline: none;
+            width: 150px;
+            transition: 0.3s;
+        }
+
+        .secret-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 5px var(--primary-color);
+        }
+
+        /* Admin Badge */
+        #admin-badge {
+            display: none;
+            color: var(--bg-color);
+            background: var(--primary-color);
+            padding: 2px 5px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        /* Tools Grid */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .tool-card {
+            border: 1px solid var(--primary-color);
+            padding: 20px;
+            background: rgba(0, 20, 0, 0.7);
+            transition: 0.3s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tool-card:hover {
+            background: var(--secondary-color);
+            transform: translateY(-5px);
+            box-shadow: 0 0 15px var(--primary-color);
+        }
+
+        .tool-card h3 { margin-bottom: 10px; }
+        .tool-card p { font-size: 0.9rem; opacity: 0.8; }
+        .tool-card a { text-decoration: none; color: inherit; display: block; height: 100%; }
+
+        /* Admin Only: Add Tool Button */
+        #add-tool-btn {
+            display: none; /* Hidden by default */
+            margin: 30px auto;
+            padding: 15px 30px;
+            background: transparent;
+            color: var(--primary-color);
+            border: 2px dashed var(--primary-color);
+            font-family: var(--font-stack);
+            cursor: pointer;
+            width: 100%;
+            font-size: 1.2rem;
+        }
+        #add-tool-btn:hover { background: var(--secondary-color); }
+
+        /* Modal Form */
+        #modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+        .modal-content {
+            background: #000;
+            border: 2px solid var(--primary-color);
+            padding: 30px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 0 20px var(--primary-color);
+        }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; }
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            background: #001100;
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+            font-family: var(--font-stack);
+        }
+        .modal-actions { display: flex; justify-content: space-between; margin-top: 20px; }
+        button {
+            padding: 10px 20px;
+            cursor: pointer;
+            font-family: var(--font-stack);
+            font-weight: bold;
+            border: none;
+        }
+        .btn-save { background: var(--primary-color); color: black; }
+        .btn-cancel { background: var(--alert-color); color: white; }
+
+        /* Animations */
+        @keyframes blink { 50% { opacity: 0; } }
+        
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            header { flex-direction: column; gap: 15px; text-align: center; }
+            .secret-box { align-items: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="matrix"></canvas>
+
+    <div class="container">
+        <header>
+            <h1>Welcome_User<span class="cursor">_</span></h1>
+            <div class="secret-box">
+                <input type="password" id="secret-code" class="secret-input" placeholder="ENTER_CODE">
+                <div id="admin-badge">ACCESS GRANTED: ADMIN</div>
+            </div>
+        </header>
+
+        <p style="margin-bottom: 20px;">> Pilih tools yang tersedia di database:</p>
+
+        <div class="tools-grid" id="tools-container">
+            </div>
+
+        <button id="add-tool-btn" onclick="openModal()">+ INJECT NEW TOOL</button>
+    </div>
+
+    <div id="modal">
+        <div class="modal-content">
+            <h2 style="margin-bottom: 20px; text-align:center;">>> NEW_TOOL_INJECTION</h2>
+            <div class="form-group">
+                <label>Nama Tool:</label>
+                <input type="text" id="tool-name">
+            </div>
+            <div class="form-group">
+                <label>Deskripsi:</label>
+                <input type="text" id="tool-desc">
+            </div>
+            <div class="form-group">
+                <label>Link URL:</label>
+                <input type="text" id="tool-link" placeholder="https://...">
+            </div>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeModal()">ABORT</button>
+                <button class="btn-save" onclick="saveTool()">INJECT</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* --- 2. LOGIC JAVASCRIPT --- */
+
+        // 1. Konfigurasi
+        const SECRET_CODE = "1337"; // <--- INI KODE RAHASIANYA (Ganti sesukamu)
+        
+        // Data Default Tools
+        const defaultTools = [
+            { name: "IP Tracker", desc: "Lacak lokasi berdasarkan IP Address", link: "#" },
+            { name: "Password Gen", desc: "Generate password super kuat", link: "#" },
+            { name: "Base64 Decode", desc: "Dekripsi kode Base64 instan", link: "#" }
+        ];
+
+        // Load data dari LocalStorage atau gunakan Default
+        let toolsData = JSON.parse(localStorage.getItem('hackerTools')) || defaultTools;
+
+        const toolsContainer = document.getElementById('tools-container');
+        const secretInput = document.getElementById('secret-code');
+        const adminBadge = document.getElementById('admin-badge');
+        const addBtn = document.getElementById('add-tool-btn');
+        const modal = document.getElementById('modal');
+
+        // 2. Render Tools ke Layar
+        function renderTools() {
+            toolsContainer.innerHTML = '';
+            toolsData.forEach(tool => {
+                const card = document.createElement('div');
+                card.className = 'tool-card';
+                card.innerHTML = `
+                    <a href="${tool.link}" target="_blank">
+                        <h3>> ${tool.name}</h3>
+                        <p>${tool.desc}</p>
+                    </a>
+                `;
+                toolsContainer.appendChild(card);
+            });
+        }
+
+        // 3. Logic Secret Code
+        secretInput.addEventListener('keyup', (e) => {
+            if (e.target.value === SECRET_CODE) {
+                activateAdminMode();
+            }
+        });
+
+        function activateAdminMode() {
+            adminBadge.style.display = 'block';
+            addBtn.style.display = 'block';
+            secretInput.style.display = 'none'; // Sembunyikan input setelah berhasil
+            alert(">> ACCESS GRANTED. Welcome, Admin.");
+        }
+
+        // 4. Logic Modal & Tambah Data
+        function openModal() { modal.style.display = 'flex'; }
+        function closeModal() { modal.style.display = 'none'; }
+
+        function saveTool() {
+            const name = document.getElementById('tool-name').value;
+            const desc = document.getElementById('tool-desc').value;
+            const link = document.getElementById('tool-link').value;
+
+            if(name && link) {
+                toolsData.push({ name, desc, link });
+                // Simpan ke LocalStorage agar tidak hilang saat refresh
+                localStorage.setItem('hackerTools', JSON.stringify(toolsData)); 
+                renderTools();
+                closeModal();
+                // Reset form
+                document.getElementById('tool-name').value = '';
+                document.getElementById('tool-desc').value = '';
+                document.getElementById('tool-link').value = '';
+            } else {
+                alert(">> ERROR: Data incomplete.");
+            }
+        }
+
+        // Initial Render
+        renderTools();
+
+        /* --- 3. MATRIX RAIN EFFECT (Visual Only) --- */
+        const canvas = document.getElementById('matrix');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const katakana = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン';
+        const latin = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        const nums = '0123456789';
+        const alphabet = katakana + latin + nums;
+
+        const fontSize = 16;
+        const columns = canvas.width/fontSize;
+        const rainDrops = [];
+
+        for( let x = 0; x < columns; x++ ) {
+            rainDrops[x] = 1;
+        }
+
+        const draw = () => {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#0F0';
+            ctx.font = fontSize + 'px monospace';
+
+            for(let i = 0; i < rainDrops.length; i++) {
+                const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+                ctx.fillText(text, i*fontSize, rainDrops[i]*fontSize);
+                if(rainDrops[i]*fontSize > canvas.height && Math.random() > 0.975){
+                    rainDrops[i] = 0;
+                }
+                rainDrops[i]++;
+            }
+        };
+        setInterval(draw, 30);
+
+        // Resize Handler
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+    </script>
+</body>
 </html>
