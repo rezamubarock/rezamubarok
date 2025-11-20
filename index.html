@@ -21,6 +21,7 @@
             color: var(--primary-color);
             font-family: var(--font-stack);
             overflow-x: hidden;
+            padding-bottom: 50px; /* Space for footer */
         }
 
         canvas {
@@ -114,6 +115,26 @@
         @keyframes blink { 50% { opacity: 0; } }
         .loader { text-align: center; margin-top: 50px; }
         .error-msg { color: var(--alert-color); font-size: 0.8rem; margin-top: 5px; display: none; text-align: right;}
+
+        /* --- FOOTER MARQUEE --- */
+        .footer-bar {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: #000; border-top: 2px solid var(--primary-color);
+            padding: 10px 0; z-index: 50; overflow: hidden;
+        }
+        .marquee-text {
+            display: inline-block;
+            white-space: nowrap;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-shadow: 0 0 10px var(--primary-color);
+            animation: scrollLeft 15s linear infinite;
+            padding-left: 100%; /* Start from right */
+        }
+        @keyframes scrollLeft {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+        }
     </style>
 </head>
 <body>
@@ -141,6 +162,13 @@
         <div class="tools-grid" id="tools-container"></div>
 
         <button id="add-tool-btn" onclick="openModal()">+ INJECT NEW NODE</button>
+    </div>
+
+    <!-- Footer Running Text -->
+    <div class="footer-bar">
+        <div class="marquee-text">
+            ALLAHUMMA SUGEH! &nbsp;&nbsp;&nbsp; ALLAHUMMA SUGEH! &nbsp;&nbsp;&nbsp; ALLAHUMMA SUGEH! &nbsp;&nbsp;&nbsp; ALLAHUMMA SUGEH!
+        </div>
     </div>
 
     <!-- Modal Form -->
