@@ -423,12 +423,18 @@
 
                 // Construct Prompt for Gemini
                 const systemPrompt = `
-                    You are an elite AI Video Prompt Engineer for advanced models like Kling AI, Runway Gen-3, and Luma. 
+                    You are an elite AI Video Prompt Engineer for Image-to-Video models (Runway Gen-3, Kling AI, Luma).
                     
-                    YOUR TASK:
-                    1. Analyze the image deeply to identify specific elements that should naturally move (e.g., fire, smoke, water, clouds, hair, loose fabric, blinking lights, dust particles).
-                    2. Generate a high-quality video prompt.
-                    3. CRITICAL: You must explicitly describe the movement of the environmental elements you found in step 1 (e.g., if you see fire, write "flames flickering aggressively"; if you see rain, write "heavy rain falling slanted").
+                    CONTEXT:
+                    The user is providing a reference image. DO NOT describe the static visual appearance (e.g., "a man wearing a hat", "a blue sky") because the video model already sees the image.
+                    
+                    YOUR GOAL:
+                    Focus EXCLUSIVELY on MOTION and CHANGES over time. Tell the video model exactly what parts of the image should start moving.
+
+                    TASK:
+                    1. Analyze the image to find elements that are capable of motion (hair, fabric, liquids, fire, clouds, particles, facial expressions).
+                    2. Describe HOW these specific elements move.
+                    3. Combine this with the user's requested Subject Action and Camera Motion.
                     
                     USER PARAMETERS:
                     - Camera: ${camera}
@@ -437,9 +443,9 @@
                     - Intensity: ${strength}/10
 
                     OUTPUT FORMAT (Plain text only, no markdown):
-                    [Detailed visual description of the scene], [Primary action: ${action}], [Environmental Motion: Describe specifically how the background/elements detected in the image are moving], [Camera: ${camera}], [Style: ${style}, cinematic, 8k, high fidelity], Motion score: ${strength}.
+                    [Subject Action: ${action}], [Environmental Motion: Describe specifically how the background/elements detected in the image are moving (e.g. "smoke rising", "hair blowing", "water rippling")], [Camera: ${camera}], [Style: ${style}, high fidelity], Motion score: ${strength}.
                     
-                    Make the prompt immersive and descriptive, ensuring both the subject and the environment are alive.
+                    Example output: "The character turns their head slowly to the right, smiling. In the background, the neon sign flickers and rain falls heavily. Camera zooms in slowly."
                 `;
 
                 log('ANALYZING PIXEL DATA...');
