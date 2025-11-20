@@ -423,7 +423,7 @@
 
                 // Construct Prompt for Gemini
                 const systemPrompt = `
-                    You are an expert AI Video Prompt Engineer. Your goal is to analyze an image and write a highly detailed text prompt that can be used in tools like Runway Gen-2, Luma Dream Machine, or Kling AI to animate the image.
+                    You are an expert AI Video Prompt Engineer. Your goal is to analyze an image and write a medium-length, punchy text prompt suitable for Runway Gen-2, Luma Dream Machine, or Kling AI.
                     
                     The user wants the following specific parameters:
                     - Camera Movement: ${camera}
@@ -432,7 +432,9 @@
                     - Motion Intensity: ${strength}/10
                     
                     Structure the output prompt exactly like this (do not include markdown bolding, just plain text):
-                    [Detailed Image Description of the subject, background, lighting, and textures], [Specific description of how the subject creates the action "${action}"], [Specific camera instructions: ${camera}], [Style keywords: ${style}, high resolution, 4k], Motion score: ${strength}.
+                    [Concise visual description of subject & background], [Clear description of action "${action}"], [Camera: ${camera}], [Style: ${style}, 4k], Motion score: ${strength}.
+                    
+                    Keep the total output between 30 to 60 words. Focus on key visual elements and motion, avoid excessive poetic language.
                 `;
 
                 log('ANALYZING PIXEL DATA...');
