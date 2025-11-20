@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>./SYSTEM_ROOT/TOOLS</title>
+    <title>./SYSTEM_ROOT/GLOBAL_TOOLS</title>
     <style>
-        /* --- 1. HACKER AESTHETIC CSS --- */
+        /* --- HACKER AESTHETIC CSS --- */
         :root {
-            --bg-color: #000000;
-            --primary-color: #0f0; /* Neon Green */
-            --secondary-color: #003300;
-            --alert-color: #f00;
+            --bg-color: #050505;
+            --primary-color: #00ff00;
+            --dim-color: #004400;
+            --alert-color: #ff0000;
             --font-stack: 'Courier New', Courier, monospace;
         }
 
@@ -21,170 +21,92 @@
             color: var(--primary-color);
             font-family: var(--font-stack);
             overflow-x: hidden;
-            position: relative;
         }
 
-        /* Matrix Rain Background */
         canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: -1;
-            opacity: 0.2;
+            position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.15;
         }
 
-        /* Container Utama */
         .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 20px;
-            position: relative;
-            z-index: 1;
+            max-width: 1000px; margin: 0 auto; padding: 20px; position: relative; z-index: 1;
         }
 
-        /* Header & Secret Box */
+        /* Header */
         header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 0;
-            border-bottom: 2px solid var(--primary-color);
-            margin-bottom: 30px;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px 0; border-bottom: 2px solid var(--primary-color); margin-bottom: 30px;
         }
+        h1 { text-transform: uppercase; text-shadow: 0 0 5px var(--primary-color); font-size: 1.5rem; }
+        .blink { animation: blink 1s infinite; }
 
-        h1 {
-            text-transform: uppercase;
-            text-shadow: 0 0 10px var(--primary-color);
-            font-size: 1.5rem;
-        }
-
-        .cursor {
-            animation: blink 1s infinite;
-        }
-
-        /* Secret Input Box */
-        .secret-box {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-        }
-
+        /* Login/Admin Area */
+        .admin-controls { text-align: right; }
         .secret-input {
-            background: transparent;
-            border: 1px solid var(--secondary-color);
-            color: var(--primary-color);
-            padding: 5px;
-            font-family: var(--font-stack);
-            outline: none;
-            width: 150px;
-            transition: 0.3s;
+            background: #000; border: 1px solid var(--dim-color); color: var(--primary-color);
+            padding: 5px; font-family: inherit; width: 120px; transition: 0.3s;
         }
-
-        .secret-input:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 5px var(--primary-color);
-        }
-
-        /* Admin Badge */
-        #admin-badge {
-            display: none;
-            color: var(--bg-color);
-            background: var(--primary-color);
-            padding: 2px 5px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            margin-top: 5px;
-        }
+        .secret-input:focus { border-color: var(--primary-color); outline: none; }
+        #admin-status { display: none; color: #000; background: var(--primary-color); padding: 2px 8px; font-weight: bold; cursor: default; }
 
         /* Tools Grid */
         .tools-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;
         }
-
         .tool-card {
-            border: 1px solid var(--primary-color);
-            padding: 20px;
-            background: rgba(0, 20, 0, 0.7);
-            transition: 0.3s;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
+            border: 1px solid var(--dim-color); padding: 20px; background: rgba(0, 20, 0, 0.6);
+            transition: 0.3s; position: relative;
         }
-
         .tool-card:hover {
-            background: var(--secondary-color);
-            transform: translateY(-5px);
-            box-shadow: 0 0 15px var(--primary-color);
+            border-color: var(--primary-color); box-shadow: 0 0 15px rgba(0, 255, 0, 0.2); transform: translateY(-3px);
         }
+        .tool-card h3 { margin-bottom: 10px; color: #fff; }
+        .tool-card p { font-size: 0.9rem; opacity: 0.8; margin-bottom: 15px; line-height: 1.4; }
+        .btn-visit {
+            display: inline-block; padding: 8px 15px; border: 1px solid var(--primary-color);
+            text-decoration: none; color: var(--primary-color); font-size: 0.8rem; transition: 0.2s;
+        }
+        .btn-visit:hover { background: var(--primary-color); color: #000; }
 
-        .tool-card h3 { margin-bottom: 10px; }
-        .tool-card p { font-size: 0.9rem; opacity: 0.8; }
-        .tool-card a { text-decoration: none; color: inherit; display: block; height: 100%; }
-
-        /* Admin Only: Add Tool Button */
-        #add-tool-btn {
+        /* Edit Button (Admin Only) */
+        .btn-edit {
             display: none; /* Hidden by default */
-            margin: 30px auto;
-            padding: 15px 30px;
-            background: transparent;
-            color: var(--primary-color);
-            border: 2px dashed var(--primary-color);
-            font-family: var(--font-stack);
-            cursor: pointer;
-            width: 100%;
-            font-size: 1.2rem;
+            position: absolute; top: 15px; right: 15px;
+            background: transparent; border: none; color: yellow; cursor: pointer; font-family: inherit;
         }
-        #add-tool-btn:hover { background: var(--secondary-color); }
+        .btn-edit:hover { text-decoration: underline; }
 
-        /* Modal Form */
+        /* Add Button */
+        #add-tool-btn {
+            display: none; width: 100%; padding: 15px; margin-top: 30px;
+            background: transparent; border: 2px dashed var(--dim-color); color: var(--dim-color);
+            font-family: inherit; cursor: pointer; font-size: 1.2rem;
+        }
+        #add-tool-btn:hover { border-color: var(--primary-color); color: var(--primary-color); }
+
+        /* Modal */
         #modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9);
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); justify-content: center; align-items: center; z-index: 100;
         }
-        .modal-content {
-            background: #000;
-            border: 2px solid var(--primary-color);
-            padding: 30px;
-            width: 90%;
-            max-width: 400px;
-            box-shadow: 0 0 20px var(--primary-color);
+        .modal-box {
+            background: #001100; border: 2px solid var(--primary-color); padding: 30px; width: 90%; max-width: 400px;
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.3);
         }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; }
-        .form-group input {
-            width: 100%;
-            padding: 10px;
-            background: #001100;
-            border: 1px solid var(--primary-color);
-            color: var(--primary-color);
-            font-family: var(--font-stack);
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; margin-bottom: 5px; font-size: 0.8rem; }
+        .input-group input, .input-group textarea {
+            width: 100%; padding: 10px; background: #000; border: 1px solid var(--dim-color);
+            color: var(--primary-color); font-family: inherit;
         }
-        .modal-actions { display: flex; justify-content: space-between; margin-top: 20px; }
-        button {
-            padding: 10px 20px;
-            cursor: pointer;
-            font-family: var(--font-stack);
-            font-weight: bold;
-            border: none;
-        }
+        .modal-btns { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+        .btn { padding: 8px 20px; cursor: pointer; font-family: inherit; border: none; font-weight: bold; }
         .btn-save { background: var(--primary-color); color: black; }
-        .btn-cancel { background: var(--alert-color); color: white; }
+        .btn-cancel { background: #330000; color: white; border: 1px solid var(--alert-color); }
 
-        /* Animations */
         @keyframes blink { 50% { opacity: 0; } }
-        
-        /* Responsive adjustments */
-        @media (max-width: 600px) {
-            header { flex-direction: column; gap: 15px; text-align: center; }
-            .secret-box { align-items: center; }
-        }
+
+        /* Loader */
+        .loader { text-align: center; margin-top: 50px; }
     </style>
 </head>
 <body>
@@ -193,165 +115,208 @@
 
     <div class="container">
         <header>
-            <h1>Welcome_User<span class="cursor">_</span></h1>
-            <div class="secret-box">
-                <input type="password" id="secret-code" class="secret-input" placeholder="ENTER_CODE">
-                <div id="admin-badge">ACCESS GRANTED: ADMIN</div>
+            <h1>System_Root<span class="blink">_</span></h1>
+            <div class="admin-controls">
+                <input type="password" id="secret-code" class="secret-input" placeholder="AUTH_CODE">
+                <div id="admin-status">ADMIN ACCESS</div>
             </div>
         </header>
 
-        <p style="margin-bottom: 20px;">> Pilih tools yang tersedia di database:</p>
+        <div id="loader" class="loader">>> CONNECTING TO DATABASE...</div>
+        <div class="tools-grid" id="tools-container"></div>
 
-        <div class="tools-grid" id="tools-container">
-            </div>
-
-        <button id="add-tool-btn" onclick="openModal()">+ INJECT NEW TOOL</button>
+        <button id="add-tool-btn" onclick="openModal()">+ INJECT NEW NODE</button>
     </div>
 
+    <!-- Modal Form -->
     <div id="modal">
-        <div class="modal-content">
-            <h2 style="margin-bottom: 20px; text-align:center;">>> NEW_TOOL_INJECTION</h2>
-            <div class="form-group">
-                <label>Nama Tool:</label>
-                <input type="text" id="tool-name">
+        <div class="modal-box">
+            <h2 id="modal-title" style="margin-bottom: 20px; border-bottom: 1px solid #0f0; padding-bottom:10px;">>> CONFIGURATION</h2>
+            <input type="hidden" id="edit-id"> <!-- Hidden ID for editing -->
+            
+            <div class="input-group">
+                <label>TOOL_NAME:</label>
+                <input type="text" id="inp-name">
             </div>
-            <div class="form-group">
-                <label>Deskripsi:</label>
-                <input type="text" id="tool-desc">
+            <div class="input-group">
+                <label>DESCRIPTION:</label>
+                <textarea id="inp-desc" rows="3"></textarea>
             </div>
-            <div class="form-group">
-                <label>Link URL:</label>
-                <input type="text" id="tool-link" placeholder="https://...">
+            <div class="input-group">
+                <label>TARGET_URL:</label>
+                <input type="text" id="inp-link" placeholder="https://...">
             </div>
-            <div class="modal-actions">
-                <button class="btn-cancel" onclick="closeModal()">ABORT</button>
-                <button class="btn-save" onclick="saveTool()">INJECT</button>
+            
+            <div class="modal-btns">
+                <button class="btn btn-cancel" onclick="closeModal()">ABORT</button>
+                <button class="btn btn-save" onclick="saveData()">EXECUTE</button>
             </div>
         </div>
     </div>
 
-    <script>
-        /* --- 2. LOGIC JAVASCRIPT --- */
+    <!-- FIREBASE SDK (Modular) -->
+    <script type="module">
+        // Import Firebase functions
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, orderBy, query } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // 1. Konfigurasi
-        const SECRET_CODE = "1337"; // <--- INI KODE RAHASIANYA (Ganti sesukamu)
-        
-        // Data Default Tools
-        const defaultTools = [
-            { name: "IP Tracker", desc: "Lacak lokasi berdasarkan IP Address", link: "#" },
-            { name: "Password Gen", desc: "Generate password super kuat", link: "#" },
-            { name: "Base64 Decode", desc: "Dekripsi kode Base64 instan", link: "#" }
-        ];
+        // ---------------------------------------------------------
+        // >>> TEMPEL KONFIGURASI FIREBASE DI BAWAH INI <<<
+        // Copy dari Console Firebase kamu, ganti isi variabel ini:
+        // ---------------------------------------------------------
+        const firebaseConfig = {
+          apiKey: "AIzaSyDsKSdRhxy9_uJ4usxb_nHf3D07VnDCHLY",
+          authDomain: "rezamubarokcom-5cd97.firebaseapp.com",
+          projectId: "rezamubarokcom-5cd97",
+          storageBucket: "rezamubarokcom-5cd97.firebasestorage.app",
+          messagingSenderId: "942638292328",
+          appId: "1:942638292328:web:7d01b463c118c758b38add",
+          measurementId: "G-GGCVT5CEGR"
+        };
+        // ---------------------------------------------------------
 
-        // Load data dari LocalStorage atau gunakan Default
-        let toolsData = JSON.parse(localStorage.getItem('hackerTools')) || defaultTools;
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const toolsCol = collection(db, "hacker_tools");
 
-        const toolsContainer = document.getElementById('tools-container');
-        const secretInput = document.getElementById('secret-code');
-        const adminBadge = document.getElementById('admin-badge');
+        // App State
+        let isAdmin = false;
+        const SECRET_CODE = "1337"; // Ganti password admin disini
+
+        // DOM Elements
+        const container = document.getElementById('tools-container');
+        const loader = document.getElementById('loader');
         const addBtn = document.getElementById('add-tool-btn');
+        const secretInput = document.getElementById('secret-code');
+        const adminStatus = document.getElementById('admin-status');
         const modal = document.getElementById('modal');
 
-        // 2. Render Tools ke Layar
-        function renderTools() {
-            toolsContainer.innerHTML = '';
-            toolsData.forEach(tool => {
+        // 1. REALTIME LISTENER (Jantung Website Ini)
+        // Fungsi ini otomatis jalan setiap ada data berubah di database
+        const q = query(toolsCol, orderBy("name"));
+        onSnapshot(q, (snapshot) => {
+            loader.style.display = 'none';
+            container.innerHTML = ''; // Clear screen
+            
+            snapshot.forEach((doc) => {
+                const tool = doc.data();
+                const id = doc.id;
+                
+                // Render Kartu
                 const card = document.createElement('div');
                 card.className = 'tool-card';
                 card.innerHTML = `
-                    <a href="${tool.link}" target="_blank">
-                        <h3>> ${tool.name}</h3>
-                        <p>${tool.desc}</p>
-                    </a>
+                    <h3>> ${tool.name}</h3>
+                    <p>${tool.desc}</p>
+                    <a href="${tool.link}" target="_blank" class="btn-visit">LAUNCH</a>
+                    <button class="btn-edit" onclick="window.editTool('${id}', '${tool.name}', '${tool.desc}', '${tool.link}')">[EDIT]</button>
                 `;
-                toolsContainer.appendChild(card);
+                container.appendChild(card);
             });
-        }
 
-        // 3. Logic Secret Code
+            // Re-apply admin view if active
+            if(isAdmin) updateAdminView();
+        }, (error) => {
+            loader.innerHTML = ">> CONNECTION FAILED: " + error.message;
+        });
+
+        // 2. Admin Logic
         secretInput.addEventListener('keyup', (e) => {
-            if (e.target.value === SECRET_CODE) {
-                activateAdminMode();
+            if(e.target.value === SECRET_CODE) {
+                isAdmin = true;
+                updateAdminView();
+                localStorage.setItem('admin_session', 'true');
+                secretInput.value = '';
             }
         });
 
-        function activateAdminMode() {
-            adminBadge.style.display = 'block';
-            addBtn.style.display = 'block';
-            secretInput.style.display = 'none'; // Sembunyikan input setelah berhasil
-            alert(">> ACCESS GRANTED. Welcome, Admin.");
+        // Cek session admin (biar gak perlu login ulang kalau refresh)
+        if(localStorage.getItem('admin_session') === 'true') {
+            isAdmin = true;
+            updateAdminView();
         }
 
-        // 4. Logic Modal & Tambah Data
-        function openModal() { modal.style.display = 'flex'; }
-        function closeModal() { modal.style.display = 'none'; }
-
-        function saveTool() {
-            const name = document.getElementById('tool-name').value;
-            const desc = document.getElementById('tool-desc').value;
-            const link = document.getElementById('tool-link').value;
-
-            if(name && link) {
-                toolsData.push({ name, desc, link });
-                // Simpan ke LocalStorage agar tidak hilang saat refresh
-                localStorage.setItem('hackerTools', JSON.stringify(toolsData)); 
-                renderTools();
-                closeModal();
-                // Reset form
-                document.getElementById('tool-name').value = '';
-                document.getElementById('tool-desc').value = '';
-                document.getElementById('tool-link').value = '';
-            } else {
-                alert(">> ERROR: Data incomplete.");
+        function updateAdminView() {
+            if(isAdmin) {
+                secretInput.style.display = 'none';
+                adminStatus.style.display = 'inline-block';
+                addBtn.style.display = 'block';
+                // Munculkan semua tombol edit
+                document.querySelectorAll('.btn-edit').forEach(btn => btn.style.display = 'block');
             }
         }
 
-        // Initial Render
-        renderTools();
+        // 3. Save / Update Logic
+        window.saveData = async () => {
+            const id = document.getElementById('edit-id').value;
+            const name = document.getElementById('inp-name').value;
+            const desc = document.getElementById('inp-desc').value;
+            const link = document.getElementById('inp-link').value;
 
-        /* --- 3. MATRIX RAIN EFFECT (Visual Only) --- */
+            if(!name || !link) return alert(">> ERROR: MISSING PARAMETERS");
+
+            try {
+                if(id) {
+                    // EDIT MODE: Update existing
+                    const toolRef = doc(db, "hacker_tools", id);
+                    await updateDoc(toolRef, { name, desc, link });
+                    alert(">> UPDATE SUCCESSFUL");
+                } else {
+                    // ADD MODE: Create new
+                    await addDoc(toolsCol, { name, desc, link });
+                    alert(">> INJECTION SUCCESSFUL");
+                }
+                closeModal();
+            } catch (e) {
+                alert(">> ERROR: " + e.message);
+            }
+        }
+
+        // Modal Helpers (Attached to window to be accessible from HTML onclick)
+        window.openModal = () => {
+            document.getElementById('modal-title').innerText = ">> NEW INJECTION";
+            document.getElementById('edit-id').value = ""; // Clear ID
+            document.getElementById('inp-name').value = "";
+            document.getElementById('inp-desc').value = "";
+            document.getElementById('inp-link').value = "";
+            modal.style.display = 'flex';
+        }
+
+        window.editTool = (id, name, desc, link) => {
+            document.getElementById('modal-title').innerText = ">> MODIFY NODE";
+            document.getElementById('edit-id').value = id;
+            document.getElementById('inp-name').value = name;
+            document.getElementById('inp-desc').value = desc;
+            document.getElementById('inp-link').value = link;
+            modal.style.display = 'flex';
+        }
+
+        window.closeModal = () => { modal.style.display = 'none'; }
+
+    </script>
+
+    <script>
+        // MATRIX RAIN EFFECT (Visual Background)
         const canvas = document.getElementById('matrix');
         const ctx = canvas.getContext('2d');
-
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
-        const katakana = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン';
-        const latin = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-        const nums = '0123456789';
-        const alphabet = katakana + latin + nums;
-
-        const fontSize = 16;
-        const columns = canvas.width/fontSize;
-        const rainDrops = [];
-
-        for( let x = 0; x < columns; x++ ) {
-            rainDrops[x] = 1;
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        const chars = '01ABCDEF'; 
+        const drops = Array(Math.floor(canvas.width/14)).fill(1);
+        function draw() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#0F0'; ctx.font = '14px monospace';
+            drops.forEach((y, i) => {
+                const text = chars[Math.floor(Math.random()*chars.length)];
+                ctx.fillText(text, i*14, y*14);
+                if(y*14 > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                drops[i]++;
+            });
         }
-
-        const draw = () => {
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = '#0F0';
-            ctx.font = fontSize + 'px monospace';
-
-            for(let i = 0; i < rainDrops.length; i++) {
-                const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
-                ctx.fillText(text, i*fontSize, rainDrops[i]*fontSize);
-                if(rainDrops[i]*fontSize > canvas.height && Math.random() > 0.975){
-                    rainDrops[i] = 0;
-                }
-                rainDrops[i]++;
-            }
-        };
-        setInterval(draw, 30);
-
-        // Resize Handler
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        });
-
+        setInterval(draw, 35);
+        window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
     </script>
 </body>
 </html>
+```
+
