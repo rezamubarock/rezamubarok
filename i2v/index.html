@@ -426,7 +426,11 @@
                 if (strength <= 3) speedAdverb = "slowly and gently";
                 else if (strength >= 8) speedAdverb = "rapidly and intensely";
                 else speedAdverb = "steadily";
+
                 // Construct Prompt for Gemini
+                // UPDATED PROMPT LOGIC: Strictly following BytePlus ModelArk Guidelines
+                // Ref: https://docs.byteplus.com/en/docs/modelark/1587797#tips-for-image-to-video-prompts
+                // Formula: Subject 1 + Movement 1 + Subject 2 + Movement 2
                 const systemPrompt = `
                     You are an AI Video Prompt Expert following the BytePlus ModelArk guidelines.
                     
@@ -506,5 +510,4 @@
         setTimeout(() => log('CONNECTION ESTABLISHED.'), 1500);
     </script>
 </body>
-</html><!DOCTYPE html>
-
+</html>
