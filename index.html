@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>./SYSTEM_ROOT/GLOBAL_TOOLS</title>
+    <title>./SYSTEM_ROOT/SECURE_ACCESS</title>
     <style>
         /* --- HACKER AESTHETIC CSS --- */
         :root {
@@ -40,13 +40,22 @@
         .blink { animation: blink 1s infinite; }
 
         /* Login/Admin Area */
-        .admin-controls { text-align: right; }
+        .admin-controls { display: flex; align-items: center; gap: 10px; }
         .secret-input {
             background: #000; border: 1px solid var(--dim-color); color: var(--primary-color);
-            padding: 5px; font-family: inherit; width: 120px; transition: 0.3s;
+            padding: 5px; font-family: inherit; width: 150px; transition: 0.3s;
         }
         .secret-input:focus { border-color: var(--primary-color); outline: none; }
-        #admin-status { display: none; color: #000; background: var(--primary-color); padding: 2px 8px; font-weight: bold; cursor: default; }
+        
+        #logout-btn {
+            display: none; background: var(--alert-color); color: white; border: none; 
+            padding: 5px 10px; cursor: pointer; font-weight: bold; font-family: inherit;
+        }
+
+        #admin-status { 
+            display: none; color: #000; background: var(--primary-color); 
+            padding: 2px 8px; font-weight: bold; cursor: default; 
+        }
 
         /* Tools Grid */
         .tools-grid {
@@ -69,8 +78,7 @@
 
         /* Edit Button (Admin Only) */
         .btn-edit {
-            display: none; /* Hidden by default */
-            position: absolute; top: 15px; right: 15px;
+            display: none; position: absolute; top: 15px; right: 15px;
             background: transparent; border: none; color: yellow; cursor: pointer; font-family: inherit;
         }
         .btn-edit:hover { text-decoration: underline; }
@@ -104,9 +112,8 @@
         .btn-cancel { background: #330000; color: white; border: 1px solid var(--alert-color); }
 
         @keyframes blink { 50% { opacity: 0; } }
-
-        /* Loader */
         .loader { text-align: center; margin-top: 50px; }
+        .error-msg { color: var(--alert-color); font-size: 0.8rem; margin-top: 5px; display: none; text-align: right;}
     </style>
 </head>
 <body>
@@ -116,13 +123,21 @@
     <div class="container">
         <header>
             <h1>System_Root<span class="blink">_</span></h1>
-            <div class="admin-controls">
-                <input type="password" id="secret-code" class="secret-input" placeholder="AUTH_CODE">
-                <div id="admin-status">ADMIN ACCESS</div>
+            <div class="wrapper-controls">
+                <div class="admin-controls">
+                    <div id="login-area">
+                        <input type="password" id="secret-code" class="secret-input" placeholder="ENTER_ROOT_PASS">
+                        <div id="login-msg" class="error-msg">ACCESS DENIED</div>
+                    </div>
+                    <div id="admin-area" style="display:none;">
+                        <span id="admin-status">ADMIN ACCESS</span>
+                        <button id="logout-btn" onclick="logout()">[LOGOUT]</button>
+                    </div>
+                </div>
             </div>
         </header>
 
-        <div id="loader" class="loader">>> CONNECTING TO DATABASE...</div>
+        <div id="loader" class="loader">>> ESTABLISHING SECURE CONNECTION...</div>
         <div class="tools-grid" id="tools-container"></div>
 
         <button id="add-tool-btn" onclick="openModal()">+ INJECT NEW NODE</button>
@@ -132,7 +147,7 @@
     <div id="modal">
         <div class="modal-box">
             <h2 id="modal-title" style="margin-bottom: 20px; border-bottom: 1px solid #0f0; padding-bottom:10px;">>> CONFIGURATION</h2>
-            <input type="hidden" id="edit-id"> <!-- Hidden ID for editing -->
+            <input type="hidden" id="edit-id">
             
             <div class="input-group">
                 <label>TOOL_NAME:</label>
@@ -154,15 +169,15 @@
         </div>
     </div>
 
-    <!-- FIREBASE SDK (Modular) -->
+    <!-- FIREBASE SDK -->
     <script type="module">
-        // Import Firebase functions
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, orderBy, query } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
         // ---------------------------------------------------------
-        // >>> TEMPEL KONFIGURASI FIREBASE DI BAWAH INI <<<
-        // Copy dari Console Firebase kamu, ganti isi variabel ini:
+        // >>> TEMPEL KONFIGURASI FIREBASE DI SINI <<<
+        // Config ini AMAN untuk publik karena dilindungi oleh Security Rules di server
         // ---------------------------------------------------------
         const firebaseConfig = {
           apiKey: "AIzaSyDsKSdRhxy9_uJ4usxb_nHf3D07VnDCHLY",
@@ -178,77 +193,94 @@
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        const auth = getAuth(app);
         const toolsCol = collection(db, "hacker_tools");
-
-        // App State
-        let isAdmin = false;
-        const SECRET_CODE = "1337"; // Ganti password admin disini
 
         // DOM Elements
         const container = document.getElementById('tools-container');
         const loader = document.getElementById('loader');
         const addBtn = document.getElementById('add-tool-btn');
         const secretInput = document.getElementById('secret-code');
-        const adminStatus = document.getElementById('admin-status');
+        const loginMsg = document.getElementById('login-msg');
+        const loginArea = document.getElementById('login-area');
+        const adminArea = document.getElementById('admin-area');
+        const logoutBtn = document.getElementById('logout-btn');
         const modal = document.getElementById('modal');
 
-        // 1. REALTIME LISTENER (Jantung Website Ini)
-        // Fungsi ini otomatis jalan setiap ada data berubah di database
+        // 1. AUTHENTICATION LOGIC (SECURE)
+        // Kita memantau status login user secara realtime
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // User is signed in
+                loginArea.style.display = 'none';
+                adminArea.style.display = 'flex';
+                addBtn.style.display = 'block';
+                logoutBtn.style.display = 'inline-block';
+                document.querySelectorAll('.btn-edit').forEach(btn => btn.style.display = 'block');
+            } else {
+                // User is signed out
+                loginArea.style.display = 'block';
+                adminArea.style.display = 'none';
+                addBtn.style.display = 'none';
+                logoutBtn.style.display = 'none';
+                document.querySelectorAll('.btn-edit').forEach(btn => btn.style.display = 'none');
+            }
+        });
+
+        // Fungsi Login
+        secretInput.addEventListener('keyup', async (e) => {
+            if (e.key === 'Enter') {
+                const password = e.target.value;
+                loginMsg.style.display = 'none';
+                
+                try {
+                    // Login ke Firebase (Proses cek password terjadi di server Google, bukan di browser)
+                    // Kita hardcode email admin di sini karena email bukan rahasia, password yang rahasia.
+                    await signInWithEmailAndPassword(auth, "admin@hacker.com", password);
+                    e.target.value = ''; // Clear input
+                } catch (error) {
+                    loginMsg.style.display = 'block';
+                    loginMsg.innerText = ">> INCORRECT PASSKEY";
+                    console.error(error);
+                }
+            }
+        });
+
+        window.logout = () => {
+            signOut(auth);
+        }
+
+        // 2. REALTIME DATA LISTENER
         const q = query(toolsCol, orderBy("name"));
         onSnapshot(q, (snapshot) => {
             loader.style.display = 'none';
-            container.innerHTML = ''; // Clear screen
+            container.innerHTML = '';
             
-            snapshot.forEach((doc) => {
-                const tool = doc.data();
-                const id = doc.id;
+            snapshot.forEach((docSnap) => {
+                const tool = docSnap.data();
+                const id = docSnap.id;
+                const currentUser = auth.currentUser; // Cek status auth saat render
                 
-                // Render Kartu
+                const editBtnStyle = currentUser ? 'display:block;' : 'display:none;';
+
                 const card = document.createElement('div');
                 card.className = 'tool-card';
                 card.innerHTML = `
                     <h3>> ${tool.name}</h3>
                     <p>${tool.desc}</p>
                     <a href="${tool.link}" target="_blank" class="btn-visit">LAUNCH</a>
-                    <button class="btn-edit" onclick="window.editTool('${id}', '${tool.name}', '${tool.desc}', '${tool.link}')">[EDIT]</button>
+                    <button class="btn-edit" style="${editBtnStyle}" onclick="window.editTool('${id}', '${tool.name}', '${tool.desc}', '${tool.link}')">[EDIT]</button>
                 `;
                 container.appendChild(card);
             });
-
-            // Re-apply admin view if active
-            if(isAdmin) updateAdminView();
         }, (error) => {
-            loader.innerHTML = ">> CONNECTION FAILED: " + error.message;
+            loader.innerText = ">> ERROR: " + error.message;
         });
 
-        // 2. Admin Logic
-        secretInput.addEventListener('keyup', (e) => {
-            if(e.target.value === SECRET_CODE) {
-                isAdmin = true;
-                updateAdminView();
-                localStorage.setItem('admin_session', 'true');
-                secretInput.value = '';
-            }
-        });
-
-        // Cek session admin (biar gak perlu login ulang kalau refresh)
-        if(localStorage.getItem('admin_session') === 'true') {
-            isAdmin = true;
-            updateAdminView();
-        }
-
-        function updateAdminView() {
-            if(isAdmin) {
-                secretInput.style.display = 'none';
-                adminStatus.style.display = 'inline-block';
-                addBtn.style.display = 'block';
-                // Munculkan semua tombol edit
-                document.querySelectorAll('.btn-edit').forEach(btn => btn.style.display = 'block');
-            }
-        }
-
-        // 3. Save / Update Logic
+        // 3. Save Data (Diproteksi Security Rules juga)
         window.saveData = async () => {
+            if (!auth.currentUser) return alert(">> ACCESS DENIED. PLEASE LOGIN.");
+
             const id = document.getElementById('edit-id').value;
             const name = document.getElementById('inp-name').value;
             const desc = document.getElementById('inp-desc').value;
@@ -258,25 +290,22 @@
 
             try {
                 if(id) {
-                    // EDIT MODE: Update existing
-                    const toolRef = doc(db, "hacker_tools", id);
-                    await updateDoc(toolRef, { name, desc, link });
+                    await updateDoc(doc(db, "hacker_tools", id), { name, desc, link });
                     alert(">> UPDATE SUCCESSFUL");
                 } else {
-                    // ADD MODE: Create new
                     await addDoc(toolsCol, { name, desc, link });
                     alert(">> INJECTION SUCCESSFUL");
                 }
                 closeModal();
             } catch (e) {
-                alert(">> ERROR: " + e.message);
+                alert(">> PERMISSION DENIED (Check Security Rules)");
             }
         }
 
-        // Modal Helpers (Attached to window to be accessible from HTML onclick)
+        // Modal Helpers
         window.openModal = () => {
             document.getElementById('modal-title').innerText = ">> NEW INJECTION";
-            document.getElementById('edit-id').value = ""; // Clear ID
+            document.getElementById('edit-id').value = "";
             document.getElementById('inp-name').value = "";
             document.getElementById('inp-desc').value = "";
             document.getElementById('inp-link').value = "";
@@ -291,13 +320,11 @@
             document.getElementById('inp-link').value = link;
             modal.style.display = 'flex';
         }
-
         window.closeModal = () => { modal.style.display = 'none'; }
-
     </script>
 
     <script>
-        // MATRIX RAIN EFFECT (Visual Background)
+        // Matrix Rain Effect
         const canvas = document.getElementById('matrix');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth; canvas.height = window.innerHeight;
@@ -318,5 +345,3 @@
     </script>
 </body>
 </html>
-```
-
