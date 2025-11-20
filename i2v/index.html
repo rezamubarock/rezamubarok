@@ -423,29 +423,22 @@
 
                 // Construct Prompt for Gemini
                 const systemPrompt = `
-                    You are an elite AI Video Prompt Engineer for Image-to-Video models (Runway Gen-3, Kling AI, Luma).
+                    You are an AI Video Prompt Expert following the BytePlus ModelArk guidelines.
                     
-                    CONTEXT:
-                    The user is providing a reference image. DO NOT describe the static visual appearance (e.g., "a man wearing a hat", "a blue sky") because the video model already sees the image.
+                    STRICT RULES:
+                    1. NO Static Description: Do not describe the clothes, colors, or static background unless they change. The video model already sees the image.
+                    2. Formula: [Subject 1] + [Movement 1] + [Subject 2] + [Movement 2] + [Camera].
+                    3. Use Adverbs: The user set motion intensity to ${strength}/10, so use adverbs like "${speedAdverb}".
                     
-                    YOUR GOAL:
-                    Focus EXCLUSIVELY on MOTION and CHANGES over time. Tell the video model exactly what parts of the image should start moving.
-
                     TASK:
-                    1. Analyze the image to find elements that are capable of motion (hair, fabric, liquids, fire, clouds, particles, facial expressions).
-                    2. Describe HOW these specific elements move.
-                    3. Combine this with the user's requested Subject Action and Camera Motion.
-                    
-                    USER PARAMETERS:
-                    - Camera: ${camera}
-                    - Primary Subject Action: ${action}
-                    - Style: ${style}
-                    - Intensity: ${strength}/10
+                    Analyze the image to find the Main Subject and Environmental Elements (fire, water, smoke, hair, etc).
+                    Combine them with the User's Action: "${action}" and Camera: "${camera}".
 
-                    OUTPUT FORMAT (Plain text only, no markdown):
-                    [Subject Action: ${action}], [Environmental Motion: Describe specifically how the background/elements detected in the image are moving (e.g. "smoke rising", "hair blowing", "water rippling")], [Camera: ${camera}], [Style: ${style}, high fidelity], Motion score: ${strength}.
-                    
-                    Example output: "The character turns their head slowly to the right, smiling. In the background, the neon sign flickers and rain falls heavily. Camera zooms in slowly."
+                    OUTPUT FORMAT (Plain text, single sentence):
+                    [Main Subject] performs [User Action] ${speedAdverb}, [Background Element] moves/changes ${speedAdverb}, [Camera Instructions].
+
+                    Example:
+                    "The cybernetic warrior turns head ${speedAdverb} and blinks, neon rain in background falls ${speedAdverb}, camera slowly zooms in."
                 `;
 
                 log('ANALYZING PIXEL DATA...');
