@@ -423,18 +423,23 @@
 
                 // Construct Prompt for Gemini
                 const systemPrompt = `
-                    You are an expert AI Video Prompt Engineer. Your goal is to analyze an image and write a medium-length, punchy text prompt suitable for Runway Gen-2, Luma Dream Machine, or Kling AI.
+                    You are an elite AI Video Prompt Engineer for advanced models like Kling AI, Runway Gen-3, and Luma. 
                     
-                    The user wants the following specific parameters:
-                    - Camera Movement: ${camera}
-                    - Subject Action: ${action}
-                    - Visual Style: ${style}
-                    - Motion Intensity: ${strength}/10
+                    YOUR TASK:
+                    1. Analyze the image deeply to identify specific elements that should naturally move (e.g., fire, smoke, water, clouds, hair, loose fabric, blinking lights, dust particles).
+                    2. Generate a high-quality video prompt.
+                    3. CRITICAL: You must explicitly describe the movement of the environmental elements you found in step 1 (e.g., if you see fire, write "flames flickering aggressively"; if you see rain, write "heavy rain falling slanted").
                     
-                    Structure the output prompt exactly like this (do not include markdown bolding, just plain text):
-                    [Concise visual description of subject & background], [Clear description of action "${action}"], [Camera: ${camera}], [Style: ${style}, 4k], Motion score: ${strength}.
+                    USER PARAMETERS:
+                    - Camera: ${camera}
+                    - Primary Subject Action: ${action}
+                    - Style: ${style}
+                    - Intensity: ${strength}/10
+
+                    OUTPUT FORMAT (Plain text only, no markdown):
+                    [Detailed visual description of the scene], [Primary action: ${action}], [Environmental Motion: Describe specifically how the background/elements detected in the image are moving], [Camera: ${camera}], [Style: ${style}, cinematic, 8k, high fidelity], Motion score: ${strength}.
                     
-                    Keep the total output between 30 to 60 words. Focus on key visual elements and motion, avoid excessive poetic language.
+                    Make the prompt immersive and descriptive, ensuring both the subject and the environment are alive.
                 `;
 
                 log('ANALYZING PIXEL DATA...');
