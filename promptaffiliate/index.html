@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Motion Prompt Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1e293b; }
+        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+        
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3b82f6;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col">
+
+    <!-- Header & API Key -->
+    <nav class="w-full border-b border-slate-700 bg-slate-800/50 p-4 sticky top-0 z-50 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                <h1 class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">MotionPrompter</h1>
+            </div>
+            
+            <div class="flex items-center gap-2 w-full md:w-auto">
+                <label for="apiKey" class="text-xs font-semibold text-slate-400 whitespace-nowrap">Gemini API Key:</label>
+                <input type="password" id="apiKey" placeholder="Paste API Key here..." class="bg-slate-900 border border-slate-600 rounded px-3 py-1.5 text-sm w-full md:w-64 focus:outline-none focus:border-blue-500 transition-colors">
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow p-4 md:p-8 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-8">
+        
+        <!-- Left Column: Upload & Settings -->
+        <div class="space-y-6">
+            
+            <!-- Upload Area -->
+            <div class="glass rounded-xl p-6 relative overflow-hidden group">
+                <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                    1. Upload Produk
+                </h2>
+                
+                <input type="file" id="imageInput" accept="image/*" class="hidden">
+                <div id="dropZone" class="border-2 border-dashed border-slate-600 rounded-lg h-64 flex flex-col items-center justify-center cursor-pointer hover:border-blue-500 hover:bg-slate-800/50 transition-all relative">
+                    <div id="uploadPrompt" class="text-center p-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-slate-500 mx-auto mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                        <p class="text-slate-400">Klik atau drag gambar produk ke sini</p>
+                    </div>
+                    <img id="imagePreview" class="absolute inset-0 w-full h-full object-contain hidden bg-slate-900" alt="Preview">
+                    <button id="removeImage" class="absolute top-2 right-2 bg-red-500/80 hover:bg-red-600 text-white p-1 rounded-full hidden z-10">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Settings Controls -->
+            <div class="glass rounded-xl p-6">
+                <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-purple-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                    2. Pengaturan Gerakan
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Camera Movement -->
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Pergerakan Kamera</label>
+                        <select id="cameraMove" class="w-full bg-slate-800 border border-slate-700 rounded p-2 text-sm focus:border-blue-500 focus:outline-none">
+                            <option value="Slow Zoom In">Slow Zoom In (Fokus Detail)</option>
+                            <option value="Zoom Out">Zoom Out (Reveal Produk)</option>
+                            <option value="Pan Right">Pan Right (Geser Kanan)</option>
+                            <option value="Pan Left">Pan Left (Geser Kiri)</option>
+                            <option value="Orbit/Arc">Orbit/Arc (Memutari Produk)</option>
+                            <option value="Handheld Shake">Handheld (Natural/Vlog)</option>
+                        </select>
+                    </div>
+
+                    <!-- Lighting/Vibe -->
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Lighting & Suasana</label>
+                        <select id="lightingVibe" class="w-full bg-slate-800 border border-slate-700 rounded p-2 text-sm focus:border-blue-500 focus:outline-none">
+                            <option value="Cinematic & Soft">Cinematic & Soft Lighting</option>
+                            <option value="Bright & Commercial">Bright Studio Commercial</option>
+                            <option value="Dark & Moody">Dark & Moody (Luxury)</option>
+                            <option value="Neon & Cyberpunk">Neon Glow (Modern/Tech)</option>
+                            <option value="Natural Sunlight">Natural Sunlight (Outdoor)</option>
+                        </select>
+                    </div>
+
+                    <!-- Speed -->
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Kecepatan Gerak</label>
+                        <select id="speed" class="w-full bg-slate-800 border border-slate-700 rounded p-2 text-sm focus:border-blue-500 focus:outline-none">
+                            <option value="Slow Motion">Slow Motion (Elegan)</option>
+                            <option value="Normal Speed">Normal Speed</option>
+                            <option value="Fast & Dynamic">Cepat & Dinamis</option>
+                        </select>
+                    </div>
+
+                     <!-- Focus Element -->
+                     <div>
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Fokus Utama</label>
+                        <input type="text" id="focusElement" placeholder="Cth: Logo, Tekstur, Uap panas..." class="w-full bg-slate-800 border border-slate-700 rounded p-2 text-sm focus:border-blue-500 focus:outline-none">
+                    </div>
+                </div>
+            </div>
+
+            <button id="generateBtn" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-bold py-4 rounded-xl shadow-lg transform transition active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center gap-2">
+                <span id="btnText">Generate Motion Prompt</span>
+                <div id="btnLoader" class="loader hidden"></div>
+            </button>
+
+        </div>
+
+        <!-- Right Column: Output -->
+        <div class="h-full flex flex-col">
+            <div class="glass rounded-xl p-6 flex-grow flex flex-col h-full border border-blue-500/20 shadow-[0_0_20px_rgba(59,130,246,0.1)]">
+                <h2 class="text-lg font-semibold mb-4 flex items-center justify-between">
+                    <span class="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                        Hasil Prompt
+                    </span>
+                    <span class="text-xs font-normal text-slate-500 bg-slate-800 px-2 py-1 rounded">English (Optimized for AI)</span>
+                </h2>
+
+                <div class="relative flex-grow">
+                    <textarea id="outputPrompt" readonly class="w-full h-full bg-slate-900/50 border border-slate-700 rounded-lg p-4 text-slate-200 resize-none focus:outline-none font-mono text-sm leading-relaxed" placeholder="Prompt akan muncul di sini..."></textarea>
+                    
+                    <div class="absolute bottom-4 right-4 flex gap-2">
+                        <button id="copyBtn" class="bg-slate-700 hover:bg-slate-600 text-white px-3 py-1.5 rounded-md text-sm flex items-center gap-2 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            Copy
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mt-4 p-3 bg-blue-900/20 border border-blue-500/20 rounded text-xs text-blue-200">
+                    <p><strong>Tips:</strong> Gunakan prompt ini di tools Image-to-Video seperti Runway Gen-2/Gen-3, Luma Dream Machine, atau Kling AI.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="text-center p-4 text-slate-600 text-sm">
+        <p>Affiliate Motion Tool &copy; 2024</p>
+    </footer>
+
+    <script>
+        // State
+        let base64Image = null;
+        let mimeType = null;
+
+        // Elements
+        const apiKeyInput = document.getElementById('apiKey');
+        const dropZone = document.getElementById('dropZone');
+        const imageInput = document.getElementById('imageInput');
+        const imagePreview = document.getElementById('imagePreview');
+        const uploadPrompt = document.getElementById('uploadPrompt');
+        const removeImageBtn = document.getElementById('removeImage');
+        const generateBtn = document.getElementById('generateBtn');
+        const outputPrompt = document.getElementById('outputPrompt');
+        const btnText = document.getElementById('btnText');
+        const btnLoader = document.getElementById('btnLoader');
+        const copyBtn = document.getElementById('copyBtn');
+
+        // Load API Key from LocalStorage
+        const savedKey = localStorage.getItem('gemini_api_key');
+        if (savedKey) apiKeyInput.value = savedKey;
+
+        apiKeyInput.addEventListener('change', () => {
+            localStorage.setItem('gemini_api_key', apiKeyInput.value);
+        });
+
+        // Image Upload Logic
+        dropZone.addEventListener('click', () => imageInput.click());
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('border-blue-500', 'bg-slate-800');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('border-blue-500', 'bg-slate-800');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('border-blue-500', 'bg-slate-800');
+            if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+        });
+
+        imageInput.addEventListener('change', (e) => {
+            if (e.target.files.length) handleFile(e.target.files[0]);
+        });
+
+        function handleFile(file) {
+            if (!file.type.startsWith('image/')) {
+                alert('Mohon upload file gambar.');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                base64Image = e.target.result.split(',')[1]; // Remove data URL prefix
+                mimeType = file.type;
+                
+                imagePreview.src = e.target.result;
+                imagePreview.classList.remove('hidden');
+                removeImageBtn.classList.remove('hidden');
+                uploadPrompt.classList.add('hidden');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        removeImageBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent triggering dropZone click
+            base64Image = null;
+            mimeType = null;
+            imageInput.value = '';
+            imagePreview.classList.add('hidden');
+            removeImageBtn.classList.add('hidden');
+            uploadPrompt.classList.remove('hidden');
+        });
+
+        // Generate Logic
+        generateBtn.addEventListener('click', async () => {
+            const apiKey = apiKeyInput.value.trim();
+            if (!apiKey) {
+                alert('Mohon masukkan Gemini API Key di pojok kiri atas.');
+                return;
+            }
+            if (!base64Image) {
+                alert('Mohon upload gambar produk terlebih dahulu.');
+                return;
+            }
+
+            // UI Loading State
+            setLoading(true);
+
+            // Get Settings
+            const move = document.getElementById('cameraMove').value;
+            const vibe = document.getElementById('lightingVibe').value;
+            const speed = document.getElementById('speed').value;
+            const focus = document.getElementById('focusElement').value || "the main product";
+
+            // Construct Prompt for Gemini
+            const userPrompt = `
+                Analyze this product image. I need a video generation prompt for an AI video tool (like Runway or Luma).
+                
+                SETTINGS:
+                - Camera Movement: ${move}
+                - Lighting/Vibe: ${vibe}
+                - Speed: ${speed}
+                - Specific Focus: ${focus}
+
+                TASK:
+                Write a concise, high-quality prompt (approx 50-70 words) describing strictly the VIDEO MOTION and VISUAL EVOLUTION. 
+                Do NOT describe the static image composition (like "there is a bottle"). 
+                Instead, describe how the camera moves, how the light reflects off the product, surface interactions, or particle effects appropriate for the product type.
+                Make it cinematic and appealing for affiliate marketing.
+                
+                Output ONLY the prompt text in English.
+            `;
+
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [
+                                { text: userPrompt },
+                                {
+                                    inline_data: {
+                                        mime_type: mimeType,
+                                        data: base64Image
+                                    }
+                                }
+                            ]
+                        }]
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    throw new Error(data.error.message);
+                }
+
+                const resultText = data.candidates[0].content.parts[0].text;
+                animateText(resultText.trim());
+
+            } catch (error) {
+                alert('Error: ' + error.message);
+            } finally {
+                setLoading(false);
+            }
+        });
+
+        function setLoading(isLoading) {
+            if (isLoading) {
+                generateBtn.disabled = true;
+                btnText.textContent = 'Menganalisa & Membuat Prompt...';
+                btnLoader.classList.remove('hidden');
+            } else {
+                generateBtn.disabled = false;
+                btnText.textContent = 'Generate Motion Prompt';
+                btnLoader.classList.add('hidden');
+            }
+        }
+
+        // Typewriter Effect for Output
+        function animateText(text) {
+            outputPrompt.value = "";
+            let i = 0;
+            const speed = 10;
+            function typeWriter() {
+                if (i < text.length) {
+                    outputPrompt.value += text.charAt(i);
+                    outputPrompt.scrollTop = outputPrompt.scrollHeight;
+                    i++;
+                    setTimeout(typeWriter, speed);
+                }
+            }
+            typeWriter();
+        }
+
+        // Copy to Clipboard
+        copyBtn.addEventListener('click', () => {
+            outputPrompt.select();
+            document.execCommand('copy'); // Fallback for some browsers
+            
+            // Modern way if allowed
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(outputPrompt.value);
+            }
+
+            const originalText = copyBtn.innerHTML;
+            copyBtn.innerHTML = `<span class="text-green-400">Copied!</span>`;
+            setTimeout(() => {
+                copyBtn.innerHTML = originalText;
+            }, 2000);
+        });
+
+    </script>
+</body>
+</html>
