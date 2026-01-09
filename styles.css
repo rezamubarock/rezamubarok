@@ -467,6 +467,7 @@ body {
   max-width: 500px;
   margin-bottom: 30px;
   position: relative;
+  z-index: 400;
 }
 
 .search-box {
@@ -534,7 +535,7 @@ body {
   max-height: 300px;
   overflow-y: auto;
   display: none;
-  z-index: 100;
+  z-index: 500;
 }
 
 .search-results.active {
