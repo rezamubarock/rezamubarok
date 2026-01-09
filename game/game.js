@@ -98,7 +98,6 @@ class AzeraGame {
             discrepanciesList: document.getElementById('discrepancies-list')
         };
 
-        // Panels for mobile
         this.panels = {
             customer: document.getElementById('panel-customer'),
             order: document.getElementById('panel-order'),
@@ -108,10 +107,24 @@ class AzeraGame {
         this.init();
     }
 
+    // Safe element text content setter
+    safeSetText(element, text) {
+        if (element) element.textContent = text;
+    }
+
+    // Safe element innerHTML setter
+    safeSetHTML(element, html) {
+        if (element) element.innerHTML = html;
+    }
+
     init() {
-        this.bindEvents();
-        this.updateRulebook('rules');
-        this.setActivePanel('customer');
+        try {
+            this.bindEvents();
+            this.updateRulebook('rules');
+            this.setActivePanel('customer');
+        } catch (error) {
+            console.error('Game init error:', error);
+        }
     }
 
     bindEvents() {
@@ -233,6 +246,17 @@ class AzeraGame {
         if (this.panels[panelName]) {
             this.panels[panelName].classList.add('active');
         }
+    }
+
+    // Helper to safely update mobile tab active states
+    setActiveMobileTab(activePanel) {
+        document.querySelectorAll('.mobile-tab').forEach(tab => {
+            if (tab.dataset.panel === activePanel) {
+                tab.classList.add('active');
+            } else {
+                tab.classList.remove('active');
+            }
+        });
     }
 
     // ========================================
@@ -364,8 +388,7 @@ class AzeraGame {
         if (window.innerWidth < 768) {
             setTimeout(() => {
                 this.setActivePanel('order');
-                document.querySelector('.mobile-tab[data-panel="order"]').classList.add('active');
-                document.querySelector('.mobile-tab[data-panel="customer"]').classList.remove('active');
+                this.setActiveMobileTab('order');
             }, 500);
         }
     }
@@ -523,8 +546,7 @@ class AzeraGame {
             this.endDay();
         } else {
             this.setActivePanel('customer');
-            document.querySelector('.mobile-tab[data-panel="customer"]').classList.add('active');
-            document.querySelector('.mobile-tab[data-panel="order"]').classList.remove('active');
+            this.setActiveMobileTab('customer');
             this.showEmptyCustomerArea();
         }
     }
