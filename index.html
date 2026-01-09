@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Reza Mubarok - Personal Links & Portfolio">
+  <title>Reza Mubarok</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
+</head>
+<body>
+
+  <!-- Menu Bar -->
+  <nav class="menubar">
+    <div class="menubar-left">
+      <span class="logo">🍎</span>
+      <span class="menubar-item">Reza Mubarok</span>
+      <span class="menubar-item">Links</span>
+      <span class="menubar-item">About</span>
+    </div>
+    <div class="menubar-right">
+      <span id="current-time" class="menubar-item"></span>
+      <span class="theme-toggle" id="theme-toggle" title="Toggle Theme">🌙</span>
+    </div>
+  </nav>
+
+  <!-- Desktop Area -->
+  <main class="desktop">
+    <div class="desktop-greeting fade-in">
+      <h1>Reza Mubarok</h1>
+      <p class="subtitle">Developer • Creator • Explorer</p>
+      <p class="dua floating">ALLAHUMMA SUGEH</p>
+    </div>
+
+    <div class="desktop-icons fade-in" id="desktop-icons">
+      <!-- Icons will be loaded from JSON -->
+    </div>
+  </main>
+
+  <!-- Folder Windows Container -->
+  <div id="folder-windows"></div>
+
+  <!-- Dock -->
+  <div class="dock-container">
+    <div class="dock" id="dock">
+      <!-- Dock items will be loaded from JSON -->
+    </div>
+  </div>
+
+  <script>
+    // ========================================
+    // Theme Toggle
+    // ========================================
+    const themeToggle = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    
+    // Load saved theme
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    html.setAttribute('data-theme', savedTheme);
+    themeToggle.textContent = savedTheme === 'dark' ? '🌙' : '☀️';
+
+    themeToggle.addEventListener('click', () => {
+      const currentTheme = html.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', newTheme);
+      themeToggle.textContent = newTheme === 'dark' ? '🌙' : '☀️';
+      localStorage.setItem('theme', newTheme);
+    });
+
+    // ========================================
+    // Clock
+    // ========================================
+    function updateClock() {
+      const now = new Date();
+      const options = { 
+        weekday: 'short', 
+        day: 'numeric', 
+        month: 'short',
+        hour: '2-digit', 
+        minute: '2-digit'
+      };
+      document.getElementById('current-time').textContent = 
+        now.toLocaleDateString('id-ID', options);
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    // ========================================
+    // Load Links from JSON
+    // ========================================
+    let linksData = null;
+
+    async function loadLinks() {
+      try {
+        const response = await fetch('links.json');
+        linksData = await response.json();
+        renderDesktopIcons();
+        renderDock();
+        createFolderWindows();
+      } catch (error) {
+        console.error('Error loading links:', error);
+      }
+    }
+
+    // ========================================
+    // Render Desktop Icons (Categories as Folders)
+    // ========================================
+    function renderDesktopIcons() {
+      const container = document.getElementById('desktop-icons');
+      container.innerHTML = '';
+
+      linksData.categories.forEach((category, index) => {
+        const icon = document.createElement('div');
+        icon.className = 'desktop-icon';
+        icon.style.animationDelay = `${index * 0.1}s`;
+        icon.innerHTML = `
+          <span class="icon">${category.icon}</span>
+          <span class="label">${category.name}</span>
+        `;
+        icon.addEventListener('click', () => openFolder(category.name));
+        container.appendChild(icon);
+      });
+    }
+
+    // ========================================
+    // Render Dock
+    // ========================================
+    function renderDock() {
+      const dock = document.getElementById('dock');
+      dock.innerHTML = '';
+
+      linksData.dock.forEach((item, index) => {
+        const dockItem = document.createElement('div');
+        dockItem.className = 'dock-item';
+        dockItem.innerHTML = `
+          <span class="icon">${item.icon}</span>
+          <span class="tooltip">${item.title}</span>
+        `;
+        
+        if (item.link.startsWith('#folder-')) {
+          const folderName = item.link.replace('#folder-', '');
+          dockItem.addEventListener('click', () => openFolder(folderName));
+        } else if (item.link !== '#') {
+          dockItem.addEventListener('click', () => window.open(item.link, '_blank'));
+        }
+        
+        dock.appendChild(dockItem);
+
+        // Add divider after first 2 items
+        if (index === 1) {
+          const divider = document.createElement('div');
+          divider.className = 'dock-divider';
+          dock.appendChild(divider);
+        }
+      });
+    }
+
+    // ========================================
+    // Create Folder Windows
+    // ========================================
+    function createFolderWindows() {
+      const container = document.getElementById('folder-windows');
+      container.innerHTML = '';
+
+      linksData.categories.forEach(category => {
+        const folder = document.createElement('div');
+        folder.className = 'folder-window';
+        folder.id = `folder-${category.name}`;
+        
+        let itemsHTML = category.items.map(item => `
+          <a href="${item.link}" target="_blank" class="folder-item">
+            <span class="icon">${item.icon}</span>
+            <span class="label">${item.title}</span>
+          </a>
+        `).join('');
+
+        folder.innerHTML = `
+          <div class="folder-header">
+            <div class="folder-controls">
+              <div class="folder-control close" onclick="closeFolder('${category.name}')"></div>
+              <div class="folder-control minimize"></div>
+              <div class="folder-control maximize"></div>
+            </div>
+            <span class="folder-title">${category.icon} ${category.name}</span>
+          </div>
+          <div class="folder-content">
+            ${itemsHTML}
+          </div>
+        `;
+        
+        container.appendChild(folder);
+      });
+    }
+
+    // ========================================
+    // Folder Controls
+    // ========================================
+    function openFolder(name) {
+      // Close all folders first
+      document.querySelectorAll('.folder-window').forEach(f => f.classList.remove('active'));
+      // Open target folder
+      const folder = document.getElementById(`folder-${name}`);
+      if (folder) {
+        folder.classList.add('active');
+      }
+    }
+
+    function closeFolder(name) {
+      const folder = document.getElementById(`folder-${name}`);
+      if (folder) {
+        folder.classList.remove('active');
+      }
+    }
+
+    // Close folder when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.folder-window') && 
+          !e.target.closest('.desktop-icon') && 
+          !e.target.closest('.dock-item')) {
+        document.querySelectorAll('.folder-window').forEach(f => f.classList.remove('active'));
+      }
+    });
+
+    // ========================================
+    // Initialize
+    // ========================================
+    loadLinks();
+  </script>
+</body>
+</html>

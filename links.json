@@ -1,0 +1,35 @@
+{
+  "categories": [
+    {
+      "name": "Projects",
+      "icon": "📁",
+      "items": [
+        { "title": "Thumbnailer", "link": "#", "icon": "🎨" },
+        { "title": "Video Bot", "link": "#", "icon": "🎬" }
+      ]
+    },
+    {
+      "name": "Tools",
+      "icon": "🛠️",
+      "items": [
+        { "title": "I2V Generator", "link": "#", "icon": "⚡" },
+        { "title": "Prompt Affiliate", "link": "#", "icon": "💡" }
+      ]
+    },
+    {
+      "name": "Social",
+      "icon": "🌐",
+      "items": [
+        { "title": "GitHub", "link": "https://github.com/rezamubarock", "icon": "🐙" },
+        { "title": "YouTube", "link": "#", "icon": "▶️" },
+        { "title": "Instagram", "link": "#", "icon": "📸" }
+      ]
+    }
+  ],
+  "dock": [
+    { "title": "Home", "link": "#", "icon": "🏠" },
+    { "title": "Projects", "link": "#folder-Projects", "icon": "📁" },
+    { "title": "Tools", "link": "#folder-Tools", "icon": "🛠️" },
+    { "title": "Contact", "link": "mailto:hello@rezamubarok.com", "icon": "✉️" }
+  ]
+}
