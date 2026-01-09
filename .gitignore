@@ -1,5 +1,7 @@
-# Ignore push script
+# Ignore push/pull scripts
 push.bat
+push.sh
+pull.sh
 
 # OS files
 .DS_Store

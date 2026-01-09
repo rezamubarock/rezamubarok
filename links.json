@@ -72,8 +72,8 @@
             "icon": "ℹ️"
         },
         {
-            "title": "Credits",
-            "link": "#showCredits",
+            "title": "Game",
+            "link": "/game",
             "icon": "☕"
         },
         {
