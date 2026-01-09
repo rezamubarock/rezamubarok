@@ -15,7 +15,59 @@
     <link
         href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <!-- Critical inline CSS for screen management -->
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0d0c0a;
+            color: #f5e6d3;
+        }
+
+        .screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none !important;
+            opacity: 0;
+            z-index: 10;
+        }
+
+        .screen.active {
+            display: flex !important;
+            opacity: 1;
+        }
+
+        .popup,
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none !important;
+            z-index: 100;
+        }
+
+        .popup.show,
+        .modal.show {
+            display: flex !important;
+        }
+    </style>
+    <link rel="stylesheet" type="text/css" href="./style.css">
 </head>
 
 <body>
