@@ -1,0 +1,21 @@
+{
+    "name": "Private",
+    "icon": "🔐",
+    "items": [
+        {
+            "title": "Secret Project 1",
+            "link": "#",
+            "icon": "🤫"
+        },
+        {
+            "title": "Secret Project 2",
+            "link": "#",
+            "icon": "🔒"
+        },
+        {
+            "title": "Admin Notes",
+            "link": "#",
+            "icon": "📝"
+        }
+    ]
+}

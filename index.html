@@ -119,6 +119,40 @@
     </div>
   </div>
 
+  <!-- Private Folder Password Modal -->
+  <div class="modal-overlay" id="private-modal">
+    <div class="modal">
+      <h2>🔐 Private Folder</h2>
+      <p>This folder is password protected.</p>
+      <div class="login-input-wrapper" style="margin: 20px 0;">
+        <input type="password" class="login-input" id="private-password" placeholder="Enter Password" autocomplete="off"
+          style="background: var(--bg-secondary); color: var(--text-primary);">
+      </div>
+      <p id="private-error" style="color: #ff5f57; font-size: 12px; display: none;">Wrong password!</p>
+      <div style="display: flex; gap: 10px; justify-content: center;">
+        <button class="modal-btn" style="background: var(--text-secondary);"
+          onclick="closeModal('private-modal')">Cancel</button>
+        <button class="modal-btn" onclick="submitPrivatePassword()">Unlock</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Private Folder Window -->
+  <div class="folder-window" id="folder-Private">
+    <div class="folder-header">
+      <div class="folder-controls">
+        <div class="folder-control close" onclick="closeFolder('Private')"></div>
+        <div class="folder-control minimize"></div>
+        <div class="folder-control maximize"></div>
+      </div>
+      <span class="folder-title">🔐 Private</span>
+    </div>
+    <div class="folder-content" id="private-folder-content">
+      <!-- Will be loaded from private-links.json -->
+    </div>
+  </div>
+
+
   <!-- Dock -->
   <div class="dock-container">
     <div class="dock" id="dock">
@@ -361,6 +395,17 @@
         icon.addEventListener('click', () => openFolder(category.name));
         container.appendChild(icon);
       });
+
+      // Add Private folder icon
+      const privateIcon = document.createElement('div');
+      privateIcon.className = 'desktop-icon';
+      privateIcon.style.animationDelay = `${linksData.categories.length * 0.1}s`;
+      privateIcon.innerHTML = `
+        <span class="icon">🔐</span>
+        <span class="label">Private</span>
+      `;
+      privateIcon.addEventListener('click', () => openPrivateFolder());
+      container.appendChild(privateIcon);
     }
 
     // ========================================
@@ -472,6 +517,77 @@
     if (!checkAuth()) {
       setTimeout(() => passwordInput.focus(), 500);
     }
+
+    // ========================================
+    // Private Folder Functions
+    // ========================================
+    let privateLinksData = null;
+
+    async function loadPrivateLinks() {
+      if (privateLinksData) return privateLinksData;
+      try {
+        const response = await fetch('private-links.json');
+        privateLinksData = await response.json();
+        return privateLinksData;
+      } catch (error) {
+        console.error('Error loading private links:', error);
+        return null;
+      }
+    }
+
+    function openPrivateFolder() {
+      if (checkPrivateAuth()) {
+        // Already authenticated, show folder directly
+        showPrivateFolderContent();
+      } else {
+        // Show password modal
+        document.getElementById('private-modal').classList.add('active');
+        document.getElementById('private-password').focus();
+        document.getElementById('private-error').style.display = 'none';
+      }
+    }
+
+    function submitPrivatePassword() {
+      const input = document.getElementById('private-password');
+      const error = document.getElementById('private-error');
+
+      if (validatePrivate(input.value)) {
+        setPrivateAuth();
+        closeModal('private-modal');
+        input.value = '';
+        error.style.display = 'none';
+        showPrivateFolderContent();
+      } else {
+        error.style.display = 'block';
+        input.classList.add('error');
+        input.value = '';
+        setTimeout(() => input.classList.remove('error'), 500);
+      }
+    }
+
+    async function showPrivateFolderContent() {
+      const data = await loadPrivateLinks();
+      if (!data) return;
+
+      const container = document.getElementById('private-folder-content');
+      container.innerHTML = data.items.map(item => `
+        <a href="${item.link}" target="_blank" class="folder-item">
+          <span class="icon">${item.icon}</span>
+          <span class="label">${item.title}</span>
+        </a>
+      `).join('');
+
+      // Close other folders and open private
+      document.querySelectorAll('.folder-window').forEach(f => f.classList.remove('active'));
+      document.getElementById('folder-Private').classList.add('active');
+    }
+
+    // Handle Enter key for private password
+    document.getElementById('private-password').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        submitPrivatePassword();
+      }
+    });
   </script>
 </body>
 
