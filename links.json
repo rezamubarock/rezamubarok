@@ -2,7 +2,7 @@
     "categories": [
         {
             "name": "Projects",
-            "icon": "📁",
+            "icon": "♠️",
             "items": [
                 {
                     "title": "Thumbnailer",
@@ -18,7 +18,7 @@
         },
         {
             "name": "Tools",
-            "icon": "🛠️",
+            "icon": "♥️",
             "items": [
                 {
                     "title": "I2V Generator",
@@ -34,7 +34,7 @@
         },
         {
             "name": "Social",
-            "icon": "🌐",
+            "icon": "♣️",
             "items": [
                 {
                     "title": "YouTube",
