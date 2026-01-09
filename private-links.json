@@ -3,19 +3,29 @@
     "icon": "♦️",
     "items": [
         {
-            "title": "Secret Project 1",
-            "link": "#",
-            "icon": "🤫"
+            "title": "VideoClip Engine",
+            "link": "https://gemini.google.com/share/9a72940161da",
+            "icon": "👨‍💻"
         },
         {
             "title": "Secret Project 2",
             "link": "#",
-            "icon": "🔒"
+            "icon": "👨‍💻"
         },
         {
             "title": "Admin Notes",
             "link": "#",
-            "icon": "📝"
+            "icon": "👨‍💻"
+        },
+        {
+            "title": "Admin Notes",
+            "link": "#",
+            "icon": "👨‍💻"
+        },
+        {
+            "title": "Admin Notes",
+            "link": "#",
+            "icon": "👨‍💻"
         }
     ]
 }

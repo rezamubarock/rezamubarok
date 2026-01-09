@@ -32,11 +32,6 @@
             "title": "Reza Mubarok",
             "items": [
                 {
-                    "title": "About Me",
-                    "icon": "👤",
-                    "action": "showAbout"
-                },
-                {
                     "title": "Send Email",
                     "icon": "✉️",
                     "action": "email"

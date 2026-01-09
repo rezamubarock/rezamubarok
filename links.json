@@ -1,55 +1,61 @@
 {
     "categories": [
         {
-            "name": "Projects",
+            "name": "Youtube",
             "icon": "♠️",
             "items": [
                 {
-                    "title": "Thumbnailer",
-                    "link": "#",
-                    "icon": "🎨"
+                    "title": "Wisdom Engine",
+                    "link": "https://gemini.google.com/share/a7c8739a0d76",
+                    "icon": "👴"
                 },
                 {
-                    "title": "Video Bot",
-                    "link": "#",
+                    "title": "Suno Engine",
+                    "link": "https://gemini.google.com/share/97f0c19151fa",
+                    "icon": "🎸"
+                },
+                {
+                    "title": "VideoClip Engine",
+                    "link": "https://gemini.google.com/share/30ae4c2a1f71",
                     "icon": "🎬"
+                },
+                {
+                    "title": "Thumbnailer",
+                    "link": "https://gemini.google.com/share/3cae2ba08b89",
+                    "icon": "🖼️"
                 }
             ]
         },
         {
-            "name": "Tools",
+            "name": "App",
             "icon": "♥️",
             "items": [
                 {
-                    "title": "I2V Generator",
+                    "title": "Coming Soon",
                     "link": "#",
                     "icon": "⚡"
-                },
-                {
-                    "title": "Prompt Affiliate",
-                    "link": "#",
-                    "icon": "💡"
                 }
             ]
         },
         {
-            "name": "Social",
+            "name": "Tiktok",
             "icon": "♣️",
             "items": [
                 {
-                    "title": "YouTube",
-                    "link": "#",
-                    "icon": "▶️"
-                },
+                    "title": "MIA",
+                    "link": "https://gemini.google.com/share/8869c5191c75",
+                    "icon": "👓"
+                }
+            ]
+        },
+        {
+            "name": "Other",
+            "icon": "🎮",
+            "items": [
                 {
-                    "title": "Instagram",
-                    "link": "#",
-                    "icon": "📸"
-                },
-                {
-                    "title": "Email",
-                    "link": "mailto:admin@rezamubarok.com",
-                    "icon": "✉️"
+                    "title": "Mastering",
+                    "link": "https://masteraudio.pro/mastering",
+                    "icon": "🎹"
                 }
             ]
         }
@@ -61,14 +67,14 @@
             "icon": "🏠"
         },
         {
-            "title": "Projects",
-            "link": "#folder-Projects",
-            "icon": "📁"
+            "title": "About",
+            "link": "showAbout",
+            "icon": "ℹ️"
         },
         {
-            "title": "Tools",
-            "link": "#folder-Tools",
-            "icon": "🛠️"
+            "title": "Credits",
+            "link": "#showCredits",
+            "icon": "☕"
         },
         {
             "title": "Contact",
