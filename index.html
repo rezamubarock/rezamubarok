@@ -190,11 +190,46 @@
 
   <script>
     // ========================================
+    // Haptic Feedback (Mobile Vibration)
+    // ========================================
+    function hapticFeedback(type = 'light') {
+      // Check if vibration is supported
+      if (!navigator.vibrate) return;
+
+      try {
+        switch (type) {
+          case 'light':
+            navigator.vibrate(10); // 10ms - subtle tap
+            break;
+          case 'medium':
+            navigator.vibrate(25); // 25ms - button press
+            break;
+          case 'heavy':
+            navigator.vibrate(50); // 50ms - important action
+            break;
+          case 'error':
+            navigator.vibrate([50, 50, 50]); // Pattern for error
+            break;
+          case 'success':
+            navigator.vibrate([10, 50, 10]); // Pattern for success
+            break;
+          default:
+            navigator.vibrate(10);
+        }
+      } catch (e) {
+        // Silently fail if vibration not allowed
+      }
+    }
+
+    // ========================================
     // Tap Sound Effect
     // ========================================
     let audioContext = null;
 
     function playTapSound() {
+      // Play haptic feedback on mobile
+      hapticFeedback('light');
+
       try {
         // Create audio context on first use (required for mobile)
         if (!audioContext) {
@@ -219,6 +254,22 @@
       } catch (e) {
         // Silently fail if audio not supported
       }
+    }
+
+    // Medium haptic for important actions
+    function playMediumTap() {
+      hapticFeedback('medium');
+      playTapSound();
+    }
+
+    // Error haptic
+    function playErrorFeedback() {
+      hapticFeedback('error');
+    }
+
+    // Success haptic  
+    function playSuccessFeedback() {
+      hapticFeedback('success');
     }
 
     // Add tap sound to clickable elements
@@ -254,9 +305,11 @@
     // Login function
     function attemptLogin() {
       if (validateAccess(passwordInput.value)) {
+        playSuccessFeedback();
         setAuth();
         loginScreen.classList.add('hidden');
       } else {
+        playErrorFeedback();
         passwordInput.classList.add('error');
         passwordInput.value = '';
         setTimeout(() => passwordInput.classList.remove('error'), 500);
@@ -529,7 +582,7 @@
       privateIcon.className = 'desktop-icon';
       privateIcon.style.animationDelay = `${linksData.categories.length * 0.1}s`;
       privateIcon.innerHTML = `
-        <span class="icon">🔐</span>
+        <span class="icon">♦️</span>
         <span class="label">Private</span>
       `;
       privateIcon.addEventListener('click', () => openPrivateFolder());
@@ -680,12 +733,14 @@
       const error = document.getElementById('private-error');
 
       if (validatePrivate(input.value)) {
+        playSuccessFeedback();
         setPrivateAuth();
         closeModal('private-modal');
         input.value = '';
         error.style.display = 'none';
         showPrivateFolderContent();
       } else {
+        playErrorFeedback();
         error.style.display = 'block';
         input.classList.add('error');
         input.value = '';
