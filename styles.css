@@ -702,9 +702,23 @@ body {
   }
 
   .desktop-greeting .dua {
-    font-size: 14px;
-    margin-top: 8px;
-    letter-spacing: 1px;
+    font-size: 13px;
+    margin-top: 12px;
+    letter-spacing: 0.5px;
+    animation: floatMobile 6s ease-in-out infinite;
+  }
+
+  /* Smaller float animation for mobile */
+  @keyframes floatMobile {
+
+    0%,
+    100% {
+      transform: translateY(0px);
+    }
+
+    50% {
+      transform: translateY(-5px);
+    }
   }
 
   /* iOS Search Bar */
@@ -877,23 +891,24 @@ body {
   .login-screen {
     padding: 0;
     justify-content: center;
+    padding-top: 60px;
   }
 
   .login-box {
-    gap: 12px;
-    margin-top: -60px;
+    gap: 10px;
+    margin-top: 40px;
     position: relative;
     z-index: 10;
   }
 
   .login-avatar {
-    width: 80px;
-    height: 80px;
-    font-size: 40px;
+    width: 70px;
+    height: 70px;
+    font-size: 35px;
   }
 
   .login-name {
-    font-size: 18px;
+    font-size: 16px;
   }
 
   .login-input-wrapper {
@@ -930,7 +945,7 @@ body {
     left: 50%;
     transform: translateX(-50%);
     bottom: unset;
-    font-size: 70px;
+    font-size: 60px;
     font-weight: 200;
     letter-spacing: -2px;
     pointer-events: none;
@@ -939,11 +954,11 @@ body {
 
   .login-date {
     position: fixed;
-    top: 130px;
+    top: 115px;
     left: 50%;
     transform: translateX(-50%);
     bottom: unset;
-    font-size: 16px;
+    font-size: 14px;
     pointer-events: none;
     z-index: 1;
   }
