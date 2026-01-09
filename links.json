@@ -68,7 +68,7 @@
         },
         {
             "title": "About",
-            "link": "showAbout",
+            "link": "/about",
             "icon": "ℹ️"
         },
         {
