@@ -37,8 +37,10 @@
       <div class="login-name">Reza Mubarok</div>
       <div class="login-input-wrapper">
         <input type="password" class="login-input" id="password-input" placeholder="Enter Password" autocomplete="off">
+        <span class="password-toggle" id="password-toggle">👁️</span>
       </div>
-      <div class="login-hint">Press Enter to unlock</div>
+      <button class="login-btn" id="login-btn">Unlock</button>
+      <div class="login-hint">Tap Unlock or press Enter</div>
     </div>
     <div class="login-time" id="login-time"></div>
     <div class="login-date" id="login-date"></div>
@@ -192,22 +194,53 @@
     // ========================================
     const loginScreen = document.getElementById('login-screen');
     const passwordInput = document.getElementById('password-input');
+    const loginBtn = document.getElementById('login-btn');
+    const passwordToggle = document.getElementById('password-toggle');
 
     // Check if already authenticated
     if (checkAuth()) {
       loginScreen.classList.add('hidden');
     }
 
+    // Login function
+    function attemptLogin() {
+      if (validateAccess(passwordInput.value)) {
+        setAuth();
+        loginScreen.classList.add('hidden');
+      } else {
+        passwordInput.classList.add('error');
+        passwordInput.value = '';
+        setTimeout(() => passwordInput.classList.remove('error'), 500);
+      }
+    }
+
+    // Enter key handler
     passwordInput.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
-        if (validateAccess(passwordInput.value)) {
-          setAuth();
-          loginScreen.classList.add('hidden');
-        } else {
-          passwordInput.classList.add('error');
-          passwordInput.value = '';
-          setTimeout(() => passwordInput.classList.remove('error'), 500);
-        }
+        e.preventDefault();
+        attemptLogin();
+      }
+    });
+
+    // Also listen for keydown for mobile compatibility
+    passwordInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.keyCode === 13) {
+        e.preventDefault();
+        attemptLogin();
+      }
+    });
+
+    // Button click handler
+    loginBtn.addEventListener('click', attemptLogin);
+
+    // Password toggle
+    passwordToggle.addEventListener('click', () => {
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        passwordToggle.textContent = '🙈';
+      } else {
+        passwordInput.type = 'password';
+        passwordToggle.textContent = '👁️';
       }
     });
 
@@ -215,6 +248,8 @@
       clearAuth();
       loginScreen.classList.remove('hidden');
       passwordInput.value = '';
+      passwordInput.type = 'password';
+      passwordToggle.textContent = '👁️';
       passwordInput.focus();
       closeAllDropdowns();
     }
