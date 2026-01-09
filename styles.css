@@ -517,6 +517,7 @@ body {
     font-size: 14px;
     font-weight: 600;
     color: white;
+    pointer-events: none;
   }
 
   .ios-status-bar .time {
@@ -782,6 +783,7 @@ body {
     height: 4px;
     background: rgba(255, 255, 255, 0.4);
     border-radius: 2px;
+    pointer-events: none;
   }
 
   /* iOS Folder Window */
@@ -1001,6 +1003,9 @@ body {
   text-align: center;
   outline: none;
   transition: all 0.3s ease;
+  cursor: text;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 .login-input::placeholder {
