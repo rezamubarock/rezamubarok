@@ -1,0 +1,78 @@
+{
+    "siteName": "Reza Mubarok",
+    "siteTitle": "Reza Mubarok",
+    "subtitle": "Developer • Creator • Marketer",
+    "dua": "ALLAHUMMA SUGEH",
+    "email": "admin@rezamubarok.com",
+    "menubar": {
+        "apple": {
+            "icon": "🍎",
+            "items": [
+                {
+                    "title": "About This Site",
+                    "icon": "ℹ️",
+                    "action": "showAbout"
+                },
+                {
+                    "divider": true
+                },
+                {
+                    "title": "Refresh",
+                    "icon": "🔄",
+                    "action": "refresh"
+                },
+                {
+                    "title": "Lock Screen",
+                    "icon": "🔒",
+                    "action": "lockScreen"
+                }
+            ]
+        },
+        "profile": {
+            "title": "Reza Mubarok",
+            "items": [
+                {
+                    "title": "About Me",
+                    "icon": "👤",
+                    "action": "showAbout"
+                },
+                {
+                    "title": "Send Email",
+                    "icon": "✉️",
+                    "action": "email"
+                }
+            ]
+        },
+        "about": {
+            "title": "About",
+            "items": [
+                {
+                    "title": "About Me",
+                    "icon": "👤",
+                    "action": "showAbout"
+                },
+                {
+                    "divider": true
+                },
+                {
+                    "title": "Credits",
+                    "icon": "❤️",
+                    "action": "showCredits"
+                }
+            ]
+        }
+    },
+    "aboutModal": {
+        "title": "👨‍💻 Reza Mubarok",
+        "description": "Developer, creator, and digital marketer based in Indonesia. Building tools and experiences that matter.",
+        "footer": "🕌 ALLAHUMMA SUGEH"
+    },
+    "creditsModal": {
+        "title": "❤️ Credits",
+        "lines": [
+            "Inspired by macOS design language by Apple Inc.",
+            "Built with vanilla HTML, CSS, and JavaScript."
+        ],
+        "copyright": "© 2026 Reza Mubarok"
+    }
+}

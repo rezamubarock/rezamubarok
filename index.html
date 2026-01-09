@@ -48,51 +48,8 @@
 
   <!-- Menu Bar -->
   <nav class="menubar">
-    <div class="menubar-left">
-      <div class="dropdown" id="apple-dropdown">
-        <span class="logo menubar-item">🍎</span>
-        <div class="dropdown-menu">
-          <div class="dropdown-item" onclick="showAbout()">
-            <span class="emoji">ℹ️</span> About This Site
-          </div>
-          <div class="dropdown-divider"></div>
-          <div class="dropdown-item" onclick="window.location.reload()">
-            <span class="emoji">🔄</span> Refresh
-          </div>
-          <div class="dropdown-item" onclick="lockScreen()">
-            <span class="emoji">🔒</span> Lock Screen
-          </div>
-        </div>
-      </div>
-      <div class="dropdown" id="name-dropdown">
-        <span class="menubar-item">Reza Mubarok</span>
-        <div class="dropdown-menu">
-          <div class="dropdown-item" onclick="showAbout()">
-            <span class="emoji">👤</span> About Me
-          </div>
-          <div class="dropdown-item" onclick="window.open('mailto:admin@rezamubarok.com', '_blank')">
-            <span class="emoji">✉️</span> Send Email
-          </div>
-        </div>
-      </div>
-      <div class="dropdown" id="links-dropdown">
-        <span class="menubar-item">Links</span>
-        <div class="dropdown-menu" id="links-menu">
-          <!-- Links will be populated from JSON -->
-        </div>
-      </div>
-      <div class="dropdown" id="about-dropdown">
-        <span class="menubar-item">About</span>
-        <div class="dropdown-menu">
-          <div class="dropdown-item" onclick="showAbout()">
-            <span class="emoji">👤</span> About Me
-          </div>
-          <div class="dropdown-divider"></div>
-          <div class="dropdown-item" onclick="showCredits()">
-            <span class="emoji">❤️</span> Credits
-          </div>
-        </div>
-      </div>
+    <div class="menubar-left" id="menubar-container">
+      <!-- Menubar items will be loaded from settings.json -->
     </div>
     <div class="menubar-right">
       <span id="current-time" class="menubar-item"></span>
@@ -128,22 +85,15 @@
 
   <!-- About Modal -->
   <div class="modal-overlay" id="about-modal">
-    <div class="modal">
-      <h2>👨‍💻 Reza Mubarok</h2>
-      <p>Developer, creator, and digital explorer based in Indonesia. Building tools and experiences that matter.</p>
-      <p style="font-size: 12px; color: var(--text-secondary);">🕌 ALLAHUMMA SUGEH</p>
-      <button class="modal-btn" onclick="closeModal('about-modal')">Close</button>
+    <div class="modal" id="about-modal-content">
+      <!-- Loaded from settings.json -->
     </div>
   </div>
 
   <!-- Credits Modal -->
   <div class="modal-overlay" id="credits-modal">
-    <div class="modal">
-      <h2>❤️ Credits</h2>
-      <p>Inspired by macOS design language by Apple Inc.</p>
-      <p>Built with vanilla HTML, CSS, and JavaScript.</p>
-      <p style="font-size: 12px;">© 2026 Reza Mubarok</p>
-      <button class="modal-btn" onclick="closeModal('credits-modal')">Close</button>
+    <div class="modal" id="credits-modal-content">
+      <!-- Loaded from settings.json -->
     </div>
   </div>
 
@@ -470,21 +420,119 @@
     window.addEventListener('resize', checkMobile);
 
     // ========================================
-    // Dropdown Menus
+    // Settings & Dynamic Menu
     // ========================================
-    const dropdowns = document.querySelectorAll('.dropdown');
+    async function loadSettings() {
+      try {
+        const response = await fetch('settings.json');
+        const settings = await response.json();
 
-    dropdowns.forEach(dropdown => {
-      const trigger = dropdown.querySelector('.menubar-item, .logo');
-      trigger.addEventListener('click', (e) => {
-        e.stopPropagation();
-        closeAllDropdowns();
-        dropdown.classList.add('active');
+        // Site Info
+        document.title = settings.siteTitle;
+
+        // Render Menubar
+        renderMenubar(settings.menubar);
+
+        // Render Modals
+        renderAboutModal(settings.aboutModal);
+        renderCreditsModal(settings.creditsModal);
+
+        // Init Dropdowns
+        initializeDropdowns();
+
+        // Re-attach sounds
+        setTimeout(addTapSounds, 500);
+
+      } catch (e) {
+        console.error('Error loading settings:', e);
+      }
+    }
+
+    function renderMenubar(menuData) {
+      const container = document.getElementById('menubar-container');
+      container.innerHTML = '';
+
+      // Apple Menu
+      container.innerHTML += createDropdown('apple-dropdown', menuData.apple.icon, 'logo menubar-item', menuData.apple.items);
+      // Profile Menu
+      container.innerHTML += createDropdown('name-dropdown', menuData.profile.title, 'menubar-item', menuData.profile.items);
+
+      // Links Menu (placeholder)
+      container.innerHTML += `
+      <div class="dropdown" id="links-dropdown">
+        <span class="menubar-item">Links</span>
+        <div class="dropdown-menu" id="links-menu"></div>
+      </div>`;
+
+      // About Menu
+      container.innerHTML += createDropdown('about-dropdown', menuData.about.title, 'menubar-item', menuData.about.items);
+    }
+
+    function createDropdown(id, triggerContent, triggerClass, items) {
+      const itemsHtml = items.map(item => {
+        if (item.divider) return '<div class="dropdown-divider"></div>';
+
+        let actionAttr = '';
+        if (item.action === 'showAbout') actionAttr = 'onclick="showAbout()"';
+        else if (item.action === 'showCredits') actionAttr = 'onclick="showCredits()"';
+        else if (item.action === 'refresh') actionAttr = 'onclick="window.location.reload()"';
+        else if (item.action === 'lockScreen') actionAttr = 'onclick="lockScreen()"';
+        else if (item.action === 'email') actionAttr = "onclick=\"window.open('mailto:admin@rezamubarok.com', '_blank')\"";
+
+        return `
+          <div class="dropdown-item" ${actionAttr}>
+            <span class="emoji">${item.icon}</span> ${item.title}
+          </div>
+        `;
+      }).join('');
+
+      return `
+        <div class="dropdown" id="${id}">
+          <span class="${triggerClass}">${triggerContent}</span>
+          <div class="dropdown-menu">
+            ${itemsHtml}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderAboutModal(data) {
+      const modal = document.getElementById('about-modal-content');
+      modal.innerHTML = `
+        <h2>${data.title}</h2>
+        <p>${data.description}</p>
+        <p style="font-size: 12px; color: var(--text-secondary);">${data.footer}</p>
+        <button class="modal-btn" onclick="closeModal('about-modal')">Close</button>
+      `;
+    }
+
+    function renderCreditsModal(data) {
+      const modal = document.getElementById('credits-modal-content');
+      const lines = data.lines.map(line => `<p>${line}</p>`).join('');
+      modal.innerHTML = `
+        <h2>${data.title}</h2>
+        ${lines}
+        <p style="font-size: 12px;">${data.copyright}</p>
+        <button class="modal-btn" onclick="closeModal('credits-modal')">Close</button>
+      `;
+    }
+
+    function initializeDropdowns() {
+      const dropdowns = document.querySelectorAll('.dropdown');
+      dropdowns.forEach(dropdown => {
+        const trigger = dropdown.querySelector('.menubar-item, .logo');
+        if (trigger) {
+          trigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeAllDropdowns();
+            dropdown.classList.add('active');
+          });
+        }
       });
-    });
+    }
 
     function closeAllDropdowns() {
-      dropdowns.forEach(d => d.classList.remove('active'));
+      document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('active'));
     }
 
     document.addEventListener('click', closeAllDropdowns);
@@ -692,12 +740,15 @@
     // ========================================
     // Initialize
     // ========================================
-    loadLinks();
+    (async function init() {
+      await loadSettings();
+      await loadLinks();
 
-    // Focus password on load if not authenticated
-    if (!checkAuth()) {
-      setTimeout(() => passwordInput.focus(), 500);
-    }
+      // Focus password on load if not authenticated
+      if (!checkAuth()) {
+        setTimeout(() => passwordInput.focus(), 500);
+      }
+    })();
 
     // ========================================
     // Private Folder Functions
