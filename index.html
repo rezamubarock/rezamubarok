@@ -1,22 +1,83 @@
 <!DOCTYPE html>
-<html lang="id" data-theme="dark">
+<html lang="id" data-theme="dark" data-time="night">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Reza Mubarok - Personal Links & Portfolio">
   <title>Reza Mubarok</title>
   <link rel="stylesheet" href="styles.css">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
+  <script src="auth.js"></script>
 </head>
+
 <body>
+
+  <!-- Login Screen -->
+  <div class="login-screen" id="login-screen">
+    <div class="login-box">
+      <div class="login-avatar">🔒</div>
+      <div class="login-name">Reza Mubarok</div>
+      <div class="login-input-wrapper">
+        <input type="password" class="login-input" id="password-input" placeholder="Enter Password" autocomplete="off">
+      </div>
+      <div class="login-hint">Press Enter to unlock</div>
+    </div>
+    <div class="login-time" id="login-time"></div>
+    <div class="login-date" id="login-date"></div>
+  </div>
 
   <!-- Menu Bar -->
   <nav class="menubar">
     <div class="menubar-left">
-      <span class="logo">🍎</span>
-      <span class="menubar-item">Reza Mubarok</span>
-      <span class="menubar-item">Links</span>
-      <span class="menubar-item">About</span>
+      <div class="dropdown" id="apple-dropdown">
+        <span class="logo menubar-item">🍎</span>
+        <div class="dropdown-menu">
+          <div class="dropdown-item" onclick="showAbout()">
+            <span class="emoji">ℹ️</span> About This Site
+          </div>
+          <div class="dropdown-divider"></div>
+          <div class="dropdown-item" onclick="window.location.reload()">
+            <span class="emoji">🔄</span> Refresh
+          </div>
+          <div class="dropdown-item" onclick="lockScreen()">
+            <span class="emoji">🔒</span> Lock Screen
+          </div>
+        </div>
+      </div>
+      <div class="dropdown" id="name-dropdown">
+        <span class="menubar-item">Reza Mubarok</span>
+        <div class="dropdown-menu">
+          <div class="dropdown-item" onclick="window.open('https://github.com/rezamubarock', '_blank')">
+            <span class="emoji">🐙</span> GitHub Profile
+          </div>
+          <div class="dropdown-item" onclick="window.open('mailto:hello@rezamubarok.com', '_blank')">
+            <span class="emoji">✉️</span> Send Email
+          </div>
+        </div>
+      </div>
+      <div class="dropdown" id="links-dropdown">
+        <span class="menubar-item">Links</span>
+        <div class="dropdown-menu" id="links-menu">
+          <!-- Links will be populated from JSON -->
+        </div>
+      </div>
+      <div class="dropdown" id="about-dropdown">
+        <span class="menubar-item">About</span>
+        <div class="dropdown-menu">
+          <div class="dropdown-item" onclick="showAbout()">
+            <span class="emoji">👤</span> About Me
+          </div>
+          <div class="dropdown-item" onclick="window.open('https://github.com/rezamubarock/rezamubarok', '_blank')">
+            <span class="emoji">📂</span> Source Code
+          </div>
+          <div class="dropdown-divider"></div>
+          <div class="dropdown-item" onclick="showCredits()">
+            <span class="emoji">❤️</span> Credits
+          </div>
+        </div>
+      </div>
     </div>
     <div class="menubar-right">
       <span id="current-time" class="menubar-item"></span>
@@ -40,6 +101,27 @@
   <!-- Folder Windows Container -->
   <div id="folder-windows"></div>
 
+  <!-- About Modal -->
+  <div class="modal-overlay" id="about-modal">
+    <div class="modal">
+      <h2>👨‍💻 Reza Mubarok</h2>
+      <p>Developer, creator, and digital explorer based in Indonesia. Building tools and experiences that matter.</p>
+      <p style="font-size: 12px; color: var(--text-secondary);">🕌 ALLAHUMMA SUGEH</p>
+      <button class="modal-btn" onclick="closeModal('about-modal')">Close</button>
+    </div>
+  </div>
+
+  <!-- Credits Modal -->
+  <div class="modal-overlay" id="credits-modal">
+    <div class="modal">
+      <h2>❤️ Credits</h2>
+      <p>Inspired by macOS design language by Apple Inc.</p>
+      <p>Built with vanilla HTML, CSS, and JavaScript.</p>
+      <p style="font-size: 12px;">© 2026 Reza Mubarok</p>
+      <button class="modal-btn" onclick="closeModal('credits-modal')">Close</button>
+    </div>
+  </div>
+
   <!-- Dock -->
   <div class="dock-container">
     <div class="dock" id="dock">
@@ -49,22 +131,102 @@
 
   <script>
     // ========================================
-    // Theme Toggle
+    // Authentication
+    // ========================================
+    const loginScreen = document.getElementById('login-screen');
+    const passwordInput = document.getElementById('password-input');
+
+    // Check if already authenticated
+    if (checkAuth()) {
+      loginScreen.classList.add('hidden');
+    }
+
+    passwordInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        if (validateAccess(passwordInput.value)) {
+          setAuth();
+          loginScreen.classList.add('hidden');
+        } else {
+          passwordInput.classList.add('error');
+          passwordInput.value = '';
+          setTimeout(() => passwordInput.classList.remove('error'), 500);
+        }
+      }
+    });
+
+    function lockScreen() {
+      clearAuth();
+      loginScreen.classList.remove('hidden');
+      passwordInput.value = '';
+      passwordInput.focus();
+      closeAllDropdowns();
+    }
+
+    // ========================================
+    // Time-based Theme
+    // ========================================
+    function updateTimeBasedTheme() {
+      const hour = new Date().getHours();
+      const html = document.documentElement;
+      let timeOfDay, theme;
+
+      if (hour >= 5 && hour < 7) {
+        timeOfDay = 'dawn';
+        theme = 'light';
+      } else if (hour >= 7 && hour < 12) {
+        timeOfDay = 'morning';
+        theme = 'light';
+      } else if (hour >= 12 && hour < 16) {
+        timeOfDay = 'afternoon';
+        theme = 'light';
+      } else if (hour >= 16 && hour < 18) {
+        timeOfDay = 'sunset';
+        theme = 'light';
+      } else if (hour >= 18 && hour < 21) {
+        timeOfDay = 'evening';
+        theme = 'dark';
+      } else {
+        timeOfDay = 'night';
+        theme = 'dark';
+      }
+
+      // Only auto-set if user hasn't manually toggled
+      if (!localStorage.getItem('manualTheme')) {
+        html.setAttribute('data-theme', theme);
+        document.getElementById('theme-toggle').textContent = theme === 'dark' ? '🌙' : '☀️';
+      }
+
+      html.setAttribute('data-time', timeOfDay);
+    }
+
+    updateTimeBasedTheme();
+    setInterval(updateTimeBasedTheme, 60000); // Update every minute
+
+    // ========================================
+    // Theme Toggle (Manual Override)
     // ========================================
     const themeToggle = document.getElementById('theme-toggle');
     const html = document.documentElement;
-    
-    // Load saved theme
-    const savedTheme = localStorage.getItem('theme') || 'dark';
-    html.setAttribute('data-theme', savedTheme);
-    themeToggle.textContent = savedTheme === 'dark' ? '🌙' : '☀️';
+
+    // Load saved manual theme if exists
+    const savedTheme = localStorage.getItem('manualTheme');
+    if (savedTheme) {
+      html.setAttribute('data-theme', savedTheme);
+      themeToggle.textContent = savedTheme === 'dark' ? '🌙' : '☀️';
+    }
 
     themeToggle.addEventListener('click', () => {
       const currentTheme = html.getAttribute('data-theme');
       const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
       html.setAttribute('data-theme', newTheme);
       themeToggle.textContent = newTheme === 'dark' ? '🌙' : '☀️';
-      localStorage.setItem('theme', newTheme);
+      localStorage.setItem('manualTheme', newTheme);
+    });
+
+    // Double click to reset to auto
+    themeToggle.addEventListener('dblclick', () => {
+      localStorage.removeItem('manualTheme');
+      updateTimeBasedTheme();
     });
 
     // ========================================
@@ -72,18 +234,76 @@
     // ========================================
     function updateClock() {
       const now = new Date();
-      const options = { 
-        weekday: 'short', 
-        day: 'numeric', 
+
+      // Menubar clock
+      const menuOptions = {
+        weekday: 'short',
+        day: 'numeric',
         month: 'short',
-        hour: '2-digit', 
+        hour: '2-digit',
         minute: '2-digit'
       };
-      document.getElementById('current-time').textContent = 
-        now.toLocaleDateString('id-ID', options);
+      document.getElementById('current-time').textContent =
+        now.toLocaleDateString('id-ID', menuOptions);
+
+      // Login screen clock
+      const loginTime = document.getElementById('login-time');
+      const loginDate = document.getElementById('login-date');
+      if (loginTime) {
+        loginTime.textContent = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+      }
+      if (loginDate) {
+        loginDate.textContent = now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long' });
+      }
     }
     updateClock();
     setInterval(updateClock, 1000);
+
+    // ========================================
+    // Dropdown Menus
+    // ========================================
+    const dropdowns = document.querySelectorAll('.dropdown');
+
+    dropdowns.forEach(dropdown => {
+      const trigger = dropdown.querySelector('.menubar-item, .logo');
+      trigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        closeAllDropdowns();
+        dropdown.classList.add('active');
+      });
+    });
+
+    function closeAllDropdowns() {
+      dropdowns.forEach(d => d.classList.remove('active'));
+    }
+
+    document.addEventListener('click', closeAllDropdowns);
+
+    // ========================================
+    // Modals
+    // ========================================
+    function showAbout() {
+      document.getElementById('about-modal').classList.add('active');
+      closeAllDropdowns();
+    }
+
+    function showCredits() {
+      document.getElementById('credits-modal').classList.add('active');
+      closeAllDropdowns();
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('active');
+    }
+
+    // Close modal on overlay click
+    document.querySelectorAll('.modal-overlay').forEach(overlay => {
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+          overlay.classList.remove('active');
+        }
+      });
+    });
 
     // ========================================
     // Load Links from JSON
@@ -97,9 +317,33 @@
         renderDesktopIcons();
         renderDock();
         createFolderWindows();
+        populateLinksMenu();
       } catch (error) {
         console.error('Error loading links:', error);
       }
+    }
+
+    // Populate Links dropdown in menubar
+    function populateLinksMenu() {
+      const menu = document.getElementById('links-menu');
+      menu.innerHTML = '';
+
+      linksData.categories.forEach((category, idx) => {
+        const item = document.createElement('div');
+        item.className = 'dropdown-item';
+        item.innerHTML = `<span class="emoji">${category.icon}</span> ${category.name}`;
+        item.onclick = () => {
+          openFolder(category.name);
+          closeAllDropdowns();
+        };
+        menu.appendChild(item);
+
+        if (idx < linksData.categories.length - 1) {
+          const divider = document.createElement('div');
+          divider.className = 'dropdown-divider';
+          menu.appendChild(divider);
+        }
+      });
     }
 
     // ========================================
@@ -136,14 +380,14 @@
           <span class="icon">${item.icon}</span>
           <span class="tooltip">${item.title}</span>
         `;
-        
+
         if (item.link.startsWith('#folder-')) {
           const folderName = item.link.replace('#folder-', '');
           dockItem.addEventListener('click', () => openFolder(folderName));
         } else if (item.link !== '#') {
           dockItem.addEventListener('click', () => window.open(item.link, '_blank'));
         }
-        
+
         dock.appendChild(dockItem);
 
         // Add divider after first 2 items
@@ -166,7 +410,7 @@
         const folder = document.createElement('div');
         folder.className = 'folder-window';
         folder.id = `folder-${category.name}`;
-        
+
         let itemsHTML = category.items.map(item => `
           <a href="${item.link}" target="_blank" class="folder-item">
             <span class="icon">${item.icon}</span>
@@ -187,7 +431,7 @@
             ${itemsHTML}
           </div>
         `;
-        
+
         container.appendChild(folder);
       });
     }
@@ -214,9 +458,10 @@
 
     // Close folder when clicking outside
     document.addEventListener('click', (e) => {
-      if (!e.target.closest('.folder-window') && 
-          !e.target.closest('.desktop-icon') && 
-          !e.target.closest('.dock-item')) {
+      if (!e.target.closest('.folder-window') &&
+        !e.target.closest('.desktop-icon') &&
+        !e.target.closest('.dock-item') &&
+        !e.target.closest('.dropdown')) {
         document.querySelectorAll('.folder-window').forEach(f => f.classList.remove('active'));
       }
     });
@@ -225,6 +470,12 @@
     // Initialize
     // ========================================
     loadLinks();
+
+    // Focus password on load if not authenticated
+    if (!checkAuth()) {
+      setTimeout(() => passwordInput.focus(), 500);
+    }
   </script>
 </body>
+
 </html>
