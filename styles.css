@@ -774,12 +774,18 @@ body {
 
   /* iOS Folder Window */
   .folder-window {
-    top: 12%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.9);
     width: 92vw;
     min-width: unset;
     max-width: 92vw;
-    max-height: 70vh;
+    max-height: 65vh;
     border-radius: 16px;
+  }
+
+  .folder-window.active {
+    transform: translate(-50%, -50%) scale(1);
   }
 
   .folder-header {
