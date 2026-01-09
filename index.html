@@ -173,7 +173,7 @@
         <div class="folder-control minimize"></div>
         <div class="folder-control maximize"></div>
       </div>
-      <span class="folder-title">🔐 Private</span>
+      <span class="folder-title">♦️ Private</span>
     </div>
     <div class="folder-content" id="private-folder-content">
       <!-- Will be loaded from private-links.json -->
@@ -189,6 +189,55 @@
   </div>
 
   <script>
+    // ========================================
+    // Tap Sound Effect
+    // ========================================
+    let audioContext = null;
+
+    function playTapSound() {
+      try {
+        // Create audio context on first use (required for mobile)
+        if (!audioContext) {
+          audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        }
+
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+
+        // Short, subtle click sound
+        oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+        oscillator.frequency.exponentialRampToValueAtTime(300, audioContext.currentTime + 0.05);
+
+        gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.05);
+
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.05);
+      } catch (e) {
+        // Silently fail if audio not supported
+      }
+    }
+
+    // Add tap sound to clickable elements
+    function addTapSounds() {
+      const clickables = document.querySelectorAll(
+        '.desktop-icon, .dock-item, .folder-item, .dropdown-item, .modal-btn, ' +
+        '.login-btn, .theme-toggle, .password-toggle, .search-clear, .folder-control.close'
+      );
+
+      clickables.forEach(el => {
+        el.addEventListener('click', playTapSound);
+      });
+    }
+
+    // Initialize tap sounds after DOM loaded
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(addTapSounds, 1000); // Wait for dynamic elements
+    });
+
     // ========================================
     // Authentication
     // ========================================
@@ -426,6 +475,8 @@
         renderDock();
         createFolderWindows();
         populateLinksMenu();
+        // Add tap sounds to new elements
+        setTimeout(addTapSounds, 100);
       } catch (error) {
         console.error('Error loading links:', error);
       }
