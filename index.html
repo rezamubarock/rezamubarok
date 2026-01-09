@@ -106,6 +106,16 @@
       <p class="dua floating">ALLAHUMMA SUGEH</p>
     </div>
 
+    <!-- Search Bar -->
+    <div class="search-container fade-in">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" class="search-input" id="search-input" placeholder="Search links..." autocomplete="off">
+        <span class="search-clear" id="search-clear" style="display: none;">✕</span>
+      </div>
+      <div class="search-results" id="search-results"></div>
+    </div>
+
     <div class="desktop-icons fade-in" id="desktop-icons">
       <!-- Icons will be loaded from JSON -->
     </div>
@@ -618,6 +628,108 @@
     document.getElementById('private-password').addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
         submitPrivatePassword();
+      }
+    });
+
+    // ========================================
+    // Search Functionality
+    // ========================================
+    const searchInput = document.getElementById('search-input');
+    const searchResults = document.getElementById('search-results');
+    const searchClear = document.getElementById('search-clear');
+
+    function getAllLinks() {
+      if (!linksData) return [];
+      const allLinks = [];
+
+      linksData.categories.forEach(category => {
+        category.items.forEach(item => {
+          allLinks.push({
+            ...item,
+            category: category.name,
+            categoryIcon: category.icon
+          });
+        });
+      });
+
+      return allLinks;
+    }
+
+    function searchLinks(query) {
+      const allLinks = getAllLinks();
+      const q = query.toLowerCase().trim();
+
+      if (!q) return [];
+
+      return allLinks.filter(link =>
+        link.title.toLowerCase().includes(q) ||
+        link.category.toLowerCase().includes(q)
+      );
+    }
+
+    function renderSearchResults(results) {
+      if (results.length === 0) {
+        searchResults.innerHTML = '<div class="search-no-results">No results found</div>';
+      } else {
+        searchResults.innerHTML = results.map(item => `
+          <a href="${item.link}" target="_blank" class="search-result-item">
+            <span class="icon">${item.icon}</span>
+            <div class="info">
+              <div class="title">${item.title}</div>
+              <div class="category">${item.categoryIcon} ${item.category}</div>
+            </div>
+          </a>
+        `).join('');
+      }
+      searchResults.classList.add('active');
+    }
+
+    searchInput.addEventListener('input', (e) => {
+      const query = e.target.value;
+
+      if (query.length > 0) {
+        searchClear.style.display = 'block';
+        const results = searchLinks(query);
+        renderSearchResults(results);
+      } else {
+        searchClear.style.display = 'none';
+        searchResults.classList.remove('active');
+      }
+    });
+
+    searchInput.addEventListener('focus', () => {
+      if (searchInput.value.length > 0) {
+        const results = searchLinks(searchInput.value);
+        renderSearchResults(results);
+      }
+    });
+
+    searchClear.addEventListener('click', () => {
+      searchInput.value = '';
+      searchClear.style.display = 'none';
+      searchResults.classList.remove('active');
+      searchInput.focus();
+    });
+
+    // Close search results when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.search-container')) {
+        searchResults.classList.remove('active');
+      }
+    });
+
+    // Keyboard shortcut: Cmd/Ctrl + K to focus search
+    document.addEventListener('keydown', (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        searchInput.focus();
+      }
+      // Escape to clear search
+      if (e.key === 'Escape') {
+        searchInput.value = '';
+        searchClear.style.display = 'none';
+        searchResults.classList.remove('active');
+        searchInput.blur();
       }
     });
   </script>

@@ -460,6 +460,129 @@ body {
 }
 
 /* ========================================
+   Search Bar (Spotlight Style)
+   ======================================== */
+.search-container {
+  width: 100%;
+  max-width: 500px;
+  margin-bottom: 30px;
+  position: relative;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 18px;
+  background: var(--bg-dock);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 20px var(--shadow-color);
+  transition: all 0.3s ease;
+}
+
+.search-box:focus-within {
+  box-shadow: 0 8px 30px var(--shadow-color);
+  border-color: var(--accent-color);
+}
+
+.search-icon {
+  font-size: 18px;
+  opacity: 0.7;
+}
+
+.search-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text-primary);
+  font-size: 16px;
+  font-family: inherit;
+}
+
+.search-input::placeholder {
+  color: var(--text-secondary);
+}
+
+.search-clear {
+  font-size: 14px;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: opacity 0.2s;
+  padding: 4px;
+}
+
+.search-clear:hover {
+  opacity: 1;
+}
+
+.search-results {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 8px;
+  background: var(--bg-folder);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 10px 40px var(--shadow-color);
+  max-height: 300px;
+  overflow-y: auto;
+  display: none;
+  z-index: 100;
+}
+
+.search-results.active {
+  display: block;
+}
+
+.search-result-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: background 0.2s;
+  text-decoration: none;
+  color: var(--text-primary);
+}
+
+.search-result-item:hover {
+  background: var(--accent-color);
+  color: white;
+}
+
+.search-result-item .icon {
+  font-size: 28px;
+}
+
+.search-result-item .info {
+  flex: 1;
+}
+
+.search-result-item .title {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.search-result-item .category {
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+.search-no-results {
+  padding: 20px;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+/* ========================================
    Responsive
    ======================================== */
 @media (max-width: 768px) {
@@ -576,6 +699,47 @@ body {
     font-size: 14px;
     margin-top: 8px;
     letter-spacing: 1px;
+  }
+
+  /* iOS Search Bar */
+  .search-container {
+    margin-bottom: 20px;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .search-box {
+    padding: 10px 14px;
+    border-radius: 10px;
+  }
+
+  .search-icon {
+    font-size: 14px;
+  }
+
+  .search-input {
+    font-size: 14px;
+  }
+
+  .search-results {
+    max-height: 250px;
+    border-radius: 10px;
+  }
+
+  .search-result-item {
+    padding: 10px 14px;
+  }
+
+  .search-result-item .icon {
+    font-size: 24px;
+  }
+
+  .search-result-item .title {
+    font-size: 13px;
+  }
+
+  .search-result-item .category {
+    font-size: 10px;
   }
 
   /* iOS App Grid - Compact */
