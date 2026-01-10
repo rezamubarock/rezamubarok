@@ -1,10 +1,9 @@
 {
     "name": "rezamubarok-site",
     "version": "2.0.0",
-    "description": "Personal website with Cloudflare Workers",
+    "description": "Personal website with Cloudflare Pages Functions",
     "scripts": {
-        "dev": "wrangler pages dev ./public --compatibility-date=2024-01-01 --kv=SITE_KV",
-        "deploy": "wrangler pages deploy ./public",
+        "dev": "npx wrangler pages dev ./public",
         "kv:init": "node scripts/init-kv.js"
     },
     "devDependencies": {

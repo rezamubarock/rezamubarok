@@ -43,21 +43,21 @@ Add:
 - `ADMIN_PASSWORD` = your admin password
 - `PRIVATE_PASSWORD` = your private folder password
 
-### 5. Connect GitHub
-1. Dashboard → Workers & Pages → Create Application → Pages
+### 5. Connect GitHub (Pages Deployment)
+1. Dashboard → Workers & Pages → Create Application → **Pages**
 2. Connect GitHub repository
-3. Configure:
-   - Build command: (leave empty)
-   - Build output directory: `public`
-4. Deploy!
+3. Configure build settings:
+   - **Framework preset**: None
+   - **Build command**: (leave EMPTY, just delete everything)
+   - **Build output directory**: `public`
+4. Add KV binding:
+   - Go to Settings → Functions → KV namespace bindings
+   - Variable name: `SITE_KV`
+   - Select your KV namespace
+5. Deploy!
 
-### 6. Initialize KV Data (First Time)
-Run the init script to see commands:
-```bash
-node scripts/init-kv.js
-```
+> ⚠️ **IMPORTANT**: Do NOT add any build command. Cloudflare Pages will automatically detect the `functions/` folder and deploy the Functions.
 
-Or manually add in Dashboard → KV → Your Namespace:
 - Key: `links` → Value: contents of links.json
 - Key: `settings` → Value: contents of settings.json
 - Key: `private-links` → Value: contents of private-links.json
