@@ -11,10 +11,3 @@ Thumbs.db
 *.swp
 *.swo
 .vscode/
-
-# Node.js
-node_modules/
-
-# Cloudflare
-.wrangler/
-.dev.vars
