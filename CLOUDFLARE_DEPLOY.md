@@ -1,71 +1,144 @@
-# Cloudflare Pages Deployment Guide
+# 🚀 Tutorial Deploy ke Cloudflare Pages (Bahasa Indonesia)
 
-## Project Structure
-```
-rezamubarok.com/
-├── public/           # Static files served by Cloudflare Pages
-│   ├── index.html
-│   ├── styles.css
-│   ├── auth.js       # Hybrid auth (API + fallback)
-│   ├── content-loader.js
-│   ├── admin.html    # Admin panel
-│   ├── game/
-│   └── *.json        # Static content files
-├── functions/        # Cloudflare Pages Functions (Workers)
-│   └── api/
-│       ├── auth.js   # Authentication API
-│       └── content.js # Content management API
-├── wrangler.toml     # Cloudflare config
-└── package.json
-```
+## ⚠️ PENTING: Pilih PAGES, Bukan Workers!
 
-## Deployment Steps
+Dari screenshot kamu, kamu masuk ke **Workers**. Ini salah!
+Kamu harus pilih **Pages** karena ini website static + functions.
 
-### 1. Create Cloudflare Account
-1. Go to [cloudflare.com](https://cloudflare.com)
-2. Sign up for free account
-3. Add your domain (optional, can use `.pages.dev` subdomain)
+---
 
-### 2. Create KV Namespace
-1. Dashboard → Workers & Pages → KV
-2. Create namespace: `REZAMUBAROK_KV`
-3. Copy the namespace ID
+## Langkah 1: Masuk ke Cloudflare
+1. Buka https://dash.cloudflare.com
+2. Login dengan akun kamu
 
-### 3. Update wrangler.toml
-Replace `YOUR_KV_NAMESPACE_ID` with your actual KV namespace ID.
+---
 
-### 4. Set Environment Variables
-Dashboard → Workers & Pages → Your Project → Settings → Environment Variables
+## Langkah 2: Buat Project Pages (BUKAN Workers!)
 
-Add:
-- `JWT_SECRET` = (generate random 32+ character string)
-- `MAIN_PASSWORD` = your main login password
-- `ADMIN_PASSWORD` = your admin password
-- `PRIVATE_PASSWORD` = your private folder password
+1. Di sidebar kiri, klik **"Workers & Pages"**
+2. Klik tombol **"Create"** (biru)
+3. **PILIH TAB "Pages"** ← PENTING!
+4. Klik **"Connect to Git"**
 
-### 5. Connect GitHub (Pages Deployment)
-1. Dashboard → Workers & Pages → Create Application → **Pages**
-2. Connect GitHub repository
-3. Configure build settings:
-   - **Framework preset**: None
-   - **Build command**: (leave EMPTY, just delete everything)
-   - **Build output directory**: `public`
-4. Add KV binding:
-   - Go to Settings → Functions → KV namespace bindings
+---
+
+## Langkah 3: Connect GitHub
+
+1. Pilih **GitHub**
+2. Authorize Cloudflare access ke GitHub kamu
+3. Pilih repository **rezamubarock/rezamubarok**
+4. Klik **"Begin setup"**
+
+---
+
+## Langkah 4: Configure Build Settings
+
+Di halaman "Set up builds and deployments", isi:
+
+| Field | Isi dengan |
+|-------|------------|
+| **Project name** | `rezamubarok` |
+| **Production branch** | `main` |
+| **Framework preset** | `None` |
+| **Build command** | **KOSONGKAN** (hapus semua) |
+| **Build output directory** | `public` |
+
+> ⚠️ **Build command HARUS KOSONG!** Jangan isi apapun.
+
+Klik **"Save and Deploy"**
+
+---
+
+## Langkah 5: Tunggu Deploy Selesai
+
+Cloudflare akan:
+1. Clone repository
+2. Detect folder `functions/`
+3. Deploy static files dari `public/`
+4. Deploy Functions API
+
+Tunggu sampai status **"Success"** ✅
+
+---
+
+## Langkah 6: Setup KV Namespace (Untuk Fitur Admin Edit)
+
+### 6a. Buat KV Namespace
+1. Sidebar → **Workers & Pages** → **KV**
+2. Klik **"Create a namespace"**
+3. Nama: `REZAMUBAROK_KV`
+4. Klik **"Add"**
+5. **Salin Namespace ID** (akan dipakai nanti)
+
+### 6b. Isi Data Awal ke KV
+1. Klik namespace yang baru dibuat
+2. Klik **"Add entry"**
+3. Tambahkan 3 entry:
+
+| Key | Value |
+|-----|-------|
+| `links` | (copy isi dari file `links.json`) |
+| `settings` | (copy isi dari file `settings.json`) |
+| `private-links` | (copy isi dari file `private-links.json`) |
+
+---
+
+## Langkah 7: Bind KV ke Project
+
+1. Kembali ke **Workers & Pages**
+2. Klik project **rezamubarok**
+3. Tab **"Settings"**
+4. Scroll ke **"Functions"** → **"KV namespace bindings"**
+5. Klik **"Add binding"**
+6. Isi:
    - Variable name: `SITE_KV`
-   - Select your KV namespace
-5. Deploy!
+   - KV namespace: pilih `REZAMUBAROK_KV`
+7. Klik **"Save"**
 
-> ⚠️ **IMPORTANT**: Do NOT add any build command. Cloudflare Pages will automatically detect the `functions/` folder and deploy the Functions.
+---
 
-- Key: `links` → Value: contents of links.json
-- Key: `settings` → Value: contents of settings.json
-- Key: `private-links` → Value: contents of private-links.json
+## Langkah 8: Set Environment Variables (Password)
 
-## URLs
-- Main site: `your-project.pages.dev` or `rezamubarok.com`
-- Admin panel: `your-project.pages.dev/admin.html`
-- Game: `your-project.pages.dev/game/`
+1. Masih di **Settings** → **"Environment variables"**
+2. Klik **"Add variable"** untuk tiap item:
 
-## Fallback Mode
-If Workers API is not configured, the site falls back to static JSON files automatically.
+| Variable name | Value |
+|---------------|-------|
+| `JWT_SECRET` | (buat random string panjang, misal: `r4nd0mS3cr3tK3y123!@#`) |
+| `MAIN_PASSWORD` | Password login utama kamu |
+| `ADMIN_PASSWORD` | Password untuk admin panel |
+| `PRIVATE_PASSWORD` | Password folder private |
+
+3. Klik **"Save"**
+
+---
+
+## Langkah 9: Re-deploy
+
+1. Tab **"Deployments"**
+2. Klik **"Retry deployment"** pada deployment terakhir
+3. Tunggu sampai selesai
+
+---
+
+## ✅ Selesai!
+
+Website kamu sekarang live di:
+- **Main site**: `https://rezamubarok.pages.dev`
+- **Admin panel**: `https://rezamubarok.pages.dev/admin.html`
+- **Game**: `https://rezamubarok.pages.dev/game/`
+
+Kalau domain custom mau di-setup, bisa di **Settings → Custom domains**.
+
+---
+
+## 🆘 Troubleshooting
+
+### Error: "It looks like you've run a Workers-specific command"
+**Solusi**: Kamu salah pilih Workers. Hapus project, buat lagi dengan **Pages**.
+
+### Build command required
+**Solusi**: Hapus field deploy command, kosongkan. Atau pilih **Pages** bukan Workers.
+
+### Functions tidak jalan
+**Solusi**: Pastikan folder `functions/` ada di repository.
