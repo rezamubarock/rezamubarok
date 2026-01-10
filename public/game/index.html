@@ -1,0 +1,3531 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#1a1714">
+    <title>Azera Enjoy - Kedai Kopi untuk Programmer</title>
+    <meta name="description" content="Game terinspirasi Papers Please dimana kamu mengelola kedai kopi untuk programmer.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+/* ========================================
+   AZERA ENJOY - Kedai Kopi untuk Programmer
+   Game terinspirasi Papers Please
+   Mobile-First Design
+   ======================================== */
+
+:root {
+    /* Color Palette - Warm Coffee Tones */
+    --bg-dark: #0d0c0a;
+    --bg-primary: #1a1714;
+    --bg-secondary: #252119;
+    --bg-tertiary: #312a23;
+    --bg-card: #3d342a;
+
+    /* Coffee Colors */
+    --coffee-dark: #2c1810;
+    --coffee-medium: #4a2c17;
+    --coffee-light: #6b4423;
+    --coffee-cream: #c4a77d;
+    --coffee-foam: #f5e6d3;
+
+    /* Accent Colors */
+    --accent-primary: #d4a574;
+    --accent-secondary: #e8c49a;
+    --accent-glow: #ffd699;
+    --accent-success: #4ade80;
+    --accent-error: #f87171;
+    --accent-warning: #fbbf24;
+    --accent-info: #60a5fa;
+
+    /* Text Colors */
+    --text-primary: #f5e6d3;
+    --text-secondary: #c4a77d;
+    --text-muted: #8b7355;
+    --text-dark: #1a1714;
+
+    /* Code Colors */
+    --code-bg: #1e1e1e;
+    --code-keyword: #569cd6;
+    --code-string: #ce9178;
+    --code-number: #b5cea8;
+    --code-comment: #6a9955;
+    --code-function: #dcdcaa;
+    --code-variable: #9cdcfe;
+
+    /* Spacing */
+    --space-xs: 4px;
+    --space-sm: 8px;
+    --space-md: 16px;
+    --space-lg: 24px;
+    --space-xl: 32px;
+    --space-2xl: 48px;
+
+    /* Border Radius */
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+
+    /* Shadows */
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+    --shadow-glow: 0 0 20px rgba(212, 165, 116, 0.3);
+
+    /* Fonts */
+    --font-mono: 'JetBrains Mono', monospace;
+    --font-sans: 'Inter', sans-serif;
+
+    /* Transitions */
+    --transition-fast: 150ms ease;
+    --transition-normal: 250ms ease;
+    --transition-slow: 400ms ease;
+
+    /* Safe areas for mobile */
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* ========================================
+   RESET & BASE STYLES
+   ======================================== */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body {
+    height: 100%;
+    overflow: hidden;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    font-family: var(--font-sans);
+    background: var(--bg-dark);
+    color: var(--text-primary);
+    line-height: 1.5;
+    font-size: 14px;
+    padding-top: var(--safe-top);
+    padding-bottom: var(--safe-bottom);
+}
+
+/* ========================================
+   SCREEN MANAGEMENT
+   ======================================== */
+
+.screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    opacity: 0;
+    transition: opacity var(--transition-slow);
+    z-index: 10;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.screen.active {
+    display: flex;
+    opacity: 1;
+}
+
+/* ========================================
+   INTRO SCREEN
+   ======================================== */
+
+#intro-screen {
+    background: linear-gradient(135deg, var(--bg-dark) 0%, var(--coffee-dark) 50%, var(--bg-dark) 100%);
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: var(--space-md);
+}
+
+.intro-content {
+    text-align: center;
+    max-width: 500px;
+    width: 100%;
+    padding: var(--space-lg);
+    animation: fadeInUp 0.8s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.logo-container {
+    position: relative;
+    display: inline-block;
+    margin-bottom: var(--space-md);
+}
+
+.logo-icon {
+    font-size: 60px;
+    filter: drop-shadow(0 0 30px rgba(212, 165, 116, 0.5));
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.coffee-steam {
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 4px;
+}
+
+.coffee-steam span {
+    width: 6px;
+    height: 25px;
+    background: linear-gradient(to top, rgba(212, 165, 116, 0.6), transparent);
+    border-radius: 50%;
+    animation: steam 2s ease-in-out infinite;
+}
+
+.coffee-steam span:nth-child(2) {
+    animation-delay: 0.3s;
+    height: 30px;
+}
+
+.coffee-steam span:nth-child(3) {
+    animation-delay: 0.6s;
+}
+
+@keyframes steam {
+    0% {
+        opacity: 0;
+        transform: translateY(0) scaleX(1);
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(-25px) scaleX(1.5);
+    }
+}
+
+.game-title {
+    font-family: var(--font-mono);
+    font-size: 2.5rem;
+    font-weight: 800;
+    letter-spacing: 4px;
+    color: var(--accent-primary);
+    text-shadow: 0 0 40px rgba(212, 165, 116, 0.5);
+    margin-bottom: var(--space-xs);
+}
+
+.game-subtitle {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: var(--space-lg);
+}
+
+.intro-description {
+    background: var(--bg-secondary);
+    border: 1px solid var(--bg-tertiary);
+    border-radius: var(--radius-lg);
+    padding: var(--space-md);
+    margin-bottom: var(--space-lg);
+    text-align: left;
+}
+
+.intro-description p {
+    margin-bottom: var(--space-sm);
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+.intro-description p:last-child {
+    margin-bottom: 0;
+}
+
+.intro-description strong {
+    color: var(--accent-primary);
+}
+
+.intro-description em {
+    color: var(--accent-secondary);
+    font-style: normal;
+}
+
+.intro-footer {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-lg);
+    margin-top: var(--space-lg);
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.version {
+    font-family: var(--font-mono);
+}
+
+/* Sound Toggle Button */
+.sound-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 1.2rem;
+    background: var(--bg-tertiary);
+    border: 2px solid var(--bg-card);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sound-btn:hover,
+.sound-btn:active {
+    background: var(--bg-card);
+    border-color: var(--accent-primary);
+}
+
+.sound-btn.muted {
+    opacity: 0.5;
+}
+
+/* ========================================
+   BUTTONS
+   ======================================== */
+
+.btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm);
+    padding: var(--space-md) var(--space-xl);
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    box-shadow: var(--shadow-md), var(--shadow-glow);
+    width: 100%;
+    max-width: 300px;
+}
+
+.btn-primary:hover,
+.btn-primary:active {
+    transform: scale(0.98);
+    box-shadow: var(--shadow-lg), 0 0 30px rgba(212, 165, 116, 0.5);
+}
+
+.btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-lg);
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--accent-primary);
+    background: transparent;
+    border: 2px solid var(--accent-primary);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+}
+
+.btn-secondary:hover,
+.btn-secondary:active {
+    background: var(--accent-primary);
+    color: var(--text-dark);
+}
+
+.btn-small {
+    padding: var(--space-xs) var(--space-sm);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    background: var(--bg-tertiary);
+    border: 1px solid var(--bg-card);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.btn-small:hover:not(:disabled),
+.btn-small:active:not(:disabled) {
+    background: var(--bg-card);
+    color: var(--text-primary);
+}
+
+.btn-small:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-cancel {
+    display: block;
+    width: 100%;
+    margin-top: var(--space-sm);
+    padding: var(--space-sm);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    background: transparent;
+    border: 1px solid var(--bg-card);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+}
+
+/* ========================================
+   BRIEFING SCREEN
+   ======================================== */
+
+#briefing-screen {
+    background: var(--bg-primary);
+    justify-content: center;
+    align-items: center;
+    padding: var(--space-md);
+}
+
+.briefing-content {
+    width: 100%;
+    max-width: 500px;
+    padding: var(--space-lg);
+    animation: slideIn 0.5s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.briefing-header {
+    text-align: center;
+    margin-bottom: var(--space-lg);
+}
+
+.day-badge {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--accent-primary);
+    padding: var(--space-sm) var(--space-lg);
+    background: var(--bg-secondary);
+    border: 3px solid var(--accent-primary);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-sm);
+}
+
+.date-display {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.briefing-scroll {
+    background: var(--bg-secondary);
+    border: 2px solid var(--bg-tertiary);
+    border-radius: var(--radius-lg);
+    padding: var(--space-md);
+    margin-bottom: var(--space-lg);
+    max-height: 50vh;
+    overflow-y: auto;
+}
+
+.briefing-title {
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--accent-secondary);
+    margin-bottom: var(--space-md);
+    padding-bottom: var(--space-sm);
+    border-bottom: 1px solid var(--bg-tertiary);
+}
+
+.rules-container {
+    margin-bottom: var(--space-md);
+}
+
+.rule-item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-sm);
+    padding: var(--space-sm);
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-sm);
+    border-left: 3px solid var(--accent-warning);
+    font-size: 0.9rem;
+}
+
+.rule-item.new {
+    border-left-color: var(--accent-error);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.7;
+    }
+}
+
+.rule-icon {
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+.rule-text {
+    flex: 1;
+    color: var(--text-secondary);
+}
+
+.rule-text strong {
+    color: var(--text-primary);
+}
+
+.targets-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-sm);
+    padding-top: var(--space-md);
+    border-top: 1px solid var(--bg-tertiary);
+}
+
+.target-item {
+    text-align: center;
+    padding: var(--space-sm);
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-md);
+}
+
+.target-label {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-bottom: var(--space-xs);
+}
+
+.target-value {
+    font-family: var(--font-mono);
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--accent-primary);
+}
+
+/* ========================================
+   GAME SCREEN
+   ======================================== */
+
+#game-screen {
+    background: var(--bg-primary);
+    flex-direction: column;
+}
+
+/* HUD */
+.game-hud {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-sm) var(--space-md);
+    background: var(--bg-secondary);
+    border-bottom: 2px solid var(--bg-tertiary);
+    flex-shrink: 0;
+}
+
+.hud-left,
+.hud-center,
+.hud-right {
+    display: flex;
+    gap: var(--space-md);
+}
+
+.hud-item {
+    text-align: center;
+}
+
+.hud-label {
+    display: block;
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+    margin-bottom: 2px;
+}
+
+.hud-value {
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.hud-value.money {
+    color: var(--accent-success);
+}
+
+.hud-value.violations {
+    color: var(--accent-error);
+}
+
+/* Mobile Tabs */
+.mobile-tabs {
+    display: flex;
+    background: var(--bg-tertiary);
+    border-bottom: 1px solid var(--bg-card);
+    flex-shrink: 0;
+}
+
+.mobile-tab {
+    flex: 1;
+    padding: var(--space-sm);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.mobile-tab.active {
+    color: var(--accent-primary);
+    background: var(--bg-secondary);
+    border-bottom-color: var(--accent-primary);
+}
+
+/* Game Area */
+.game-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Panels - Mobile First */
+.panel {
+    display: none;
+    flex-direction: column;
+    background: var(--bg-secondary);
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.panel.active {
+    display: flex;
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-sm) var(--space-md);
+    background: var(--bg-tertiary);
+    border-bottom: 1px solid var(--bg-card);
+    flex-shrink: 0;
+}
+
+.panel-title {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+/* Customer Panel */
+.customer-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: var(--space-md);
+    overflow-y: auto;
+}
+
+.empty-state {
+    text-align: center;
+    color: var(--text-muted);
+    padding: var(--space-lg);
+}
+
+.empty-icon {
+    font-size: 2.5rem;
+    display: block;
+    margin-bottom: var(--space-md);
+    opacity: 0.5;
+}
+
+.customer-card {
+    width: 100%;
+    max-width: 300px;
+    text-align: center;
+    animation: customerEnter 0.5s ease-out;
+}
+
+@keyframes customerEnter {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.customer-avatar {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto var(--space-md);
+    background: var(--bg-tertiary);
+    border: 3px solid var(--bg-card);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+}
+
+.customer-name {
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--space-xs);
+}
+
+.customer-role {
+    font-size: 0.85rem;
+    color: var(--accent-primary);
+    margin-bottom: var(--space-sm);
+}
+
+.customer-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+    justify-content: center;
+    margin-top: var(--space-sm);
+}
+
+.stat-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: var(--space-xs) var(--space-sm);
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+}
+
+.stat-badge.warning {
+    background: rgba(251, 191, 36, 0.2);
+    color: var(--accent-warning);
+}
+
+.stat-badge.danger {
+    background: rgba(248, 113, 113, 0.2);
+    color: var(--accent-error);
+}
+
+.customer-dialogue {
+    margin-top: var(--space-md);
+    padding: var(--space-md);
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-md);
+    font-style: italic;
+    color: var(--text-secondary);
+    position: relative;
+    font-size: 0.9rem;
+}
+
+.customer-dialogue::before {
+    content: '"';
+    font-size: 1.5rem;
+    color: var(--accent-primary);
+    position: absolute;
+    top: 2px;
+    left: var(--space-sm);
+}
+
+/* Order Panel */
+.order-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-md);
+    overflow-y: auto;
+}
+
+.order-document {
+    background: var(--coffee-foam);
+    color: var(--text-dark);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+    box-shadow: var(--shadow-md);
+    animation: paperSlide 0.4s ease-out;
+}
+
+@keyframes paperSlide {
+    from {
+        opacity: 0;
+        transform: translateY(-20px) rotate(-2deg);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) rotate(0);
+    }
+}
+
+.order-header {
+    text-align: center;
+    padding-bottom: var(--space-sm);
+    border-bottom: 2px dashed var(--coffee-light);
+    margin-bottom: var(--space-sm);
+}
+
+.order-logo {
+    font-size: 1.2rem;
+    margin-bottom: var(--space-xs);
+}
+
+.order-title {
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--coffee-dark);
+}
+
+.order-number {
+    font-size: 0.7rem;
+    color: var(--coffee-medium);
+}
+
+.order-code {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    background: var(--code-bg);
+    color: #d4d4d4;
+    padding: var(--space-sm);
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--space-sm);
+    overflow-x: auto;
+    white-space: pre;
+}
+
+.order-code .keyword {
+    color: var(--code-keyword);
+}
+
+.order-code .string {
+    color: var(--code-string);
+}
+
+.order-code .number {
+    color: var(--code-number);
+}
+
+.order-code .comment {
+    color: var(--code-comment);
+}
+
+.order-code .function {
+    color: var(--code-function);
+}
+
+.order-code .variable {
+    color: var(--code-variable);
+}
+
+.order-code .error {
+    color: var(--accent-error);
+    text-decoration: wavy underline;
+    text-decoration-color: var(--accent-error);
+}
+
+.order-details {
+    display: grid;
+    gap: var(--space-xs);
+    font-size: 0.85rem;
+}
+
+.order-row {
+    display: flex;
+    justify-content: space-between;
+    padding: var(--space-xs) 0;
+    border-bottom: 1px dotted var(--coffee-light);
+}
+
+.order-row:last-child {
+    border-bottom: none;
+}
+
+.order-label {
+    font-weight: 500;
+    color: var(--coffee-medium);
+}
+
+.order-value {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    color: var(--coffee-dark);
+}
+
+.order-value.error {
+    color: var(--accent-error);
+}
+
+.order-total {
+    margin-top: var(--space-sm);
+    padding-top: var(--space-sm);
+    border-top: 2px solid var(--coffee-dark);
+    display: flex;
+    justify-content: space-between;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.promo-code {
+    margin-top: var(--space-sm);
+    padding: var(--space-sm);
+    background: rgba(107, 68, 35, 0.1);
+    border: 1px dashed var(--coffee-medium);
+    border-radius: var(--radius-sm);
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+}
+
+/* Rules Panel */
+.rules-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.rulebook-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--bg-tertiary);
+    flex-shrink: 0;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: var(--space-sm);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.tab-btn:hover,
+.tab-btn:active {
+    color: var(--text-secondary);
+    background: var(--bg-tertiary);
+}
+
+.tab-btn.active {
+    color: var(--accent-primary);
+    background: var(--bg-tertiary);
+    border-bottom: 2px solid var(--accent-primary);
+}
+
+.rulebook-content {
+    flex: 1;
+    padding: var(--space-md);
+    overflow-y: auto;
+    font-size: 0.85rem;
+}
+
+.rulebook-section {
+    margin-bottom: var(--space-lg);
+}
+
+.rulebook-section-title {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--accent-primary);
+    margin-bottom: var(--space-sm);
+}
+
+.rulebook-item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-sm);
+    padding: var(--space-xs) 0;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+}
+
+.rulebook-item::before {
+    content: '•';
+    color: var(--accent-primary);
+}
+
+.menu-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-sm);
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--space-xs);
+    font-size: 0.85rem;
+}
+
+.menu-item-name {
+    font-weight: 500;
+}
+
+.menu-item-price {
+    font-family: var(--font-mono);
+    color: var(--accent-success);
+}
+
+.member-tier {
+    padding: var(--space-sm);
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--space-sm);
+    border-left: 3px solid var(--accent-primary);
+}
+
+.member-tier-name {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--space-xs);
+    font-size: 0.9rem;
+}
+
+.member-tier-perks {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+/* Action Panel */
+.action-panel {
+    padding: var(--space-sm) var(--space-md);
+    padding-bottom: calc(var(--space-md) + var(--safe-bottom));
+    background: var(--bg-secondary);
+    border-top: 2px solid var(--bg-tertiary);
+    flex-shrink: 0;
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--space-md);
+}
+
+.btn-action {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: var(--space-sm) var(--space-lg);
+    font-family: var(--font-mono);
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    min-width: 100px;
+}
+
+.btn-action:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.btn-reject {
+    background: linear-gradient(135deg, #7f1d1d, #991b1b);
+    color: var(--text-primary);
+}
+
+.btn-reject:active:not(:disabled) {
+    background: linear-gradient(135deg, #991b1b, #b91c1c);
+    transform: scale(0.95);
+}
+
+.btn-approve {
+    background: linear-gradient(135deg, #14532d, #166534);
+    color: var(--text-primary);
+}
+
+.btn-approve:active:not(:disabled) {
+    background: linear-gradient(135deg, #166534, #15803d);
+    transform: scale(0.95);
+}
+
+.action-icon {
+    font-size: 1.2rem;
+}
+
+.action-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.stamp-container {
+    position: relative;
+    width: 80px;
+    height: 50px;
+}
+
+.stamp {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-15deg) scale(0);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: var(--space-xs) var(--space-sm);
+    border: 2px solid;
+    border-radius: var(--radius-sm);
+    opacity: 0;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.stamp.show {
+    transform: translate(-50%, -50%) rotate(-15deg) scale(1);
+    opacity: 1;
+}
+
+.stamp-approved {
+    color: var(--accent-success);
+    border-color: var(--accent-success);
+    background: rgba(74, 222, 128, 0.1);
+}
+
+.stamp-rejected {
+    color: var(--accent-error);
+    border-color: var(--accent-error);
+    background: rgba(248, 113, 113, 0.1);
+}
+
+/* Reason Selector */
+.reason-selector {
+    margin-top: var(--space-sm);
+    padding: var(--space-sm);
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-md);
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.reason-title {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-sm);
+    text-align: center;
+}
+
+.reason-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+    justify-content: center;
+}
+
+.reason-btn {
+    padding: var(--space-xs) var(--space-sm);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    background: var(--bg-card);
+    border: 1px solid var(--bg-card);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.reason-btn:active {
+    color: var(--accent-error);
+    border-color: var(--accent-error);
+    background: rgba(248, 113, 113, 0.1);
+}
+
+/* ========================================
+   POPUPS & MODALS
+   ======================================== */
+
+.popup,
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    padding: var(--space-md);
+}
+
+.popup.show,
+.modal.show {
+    display: flex;
+}
+
+.popup-content,
+.modal-content {
+    background: var(--bg-secondary);
+    border: 2px solid var(--bg-tertiary);
+    border-radius: var(--radius-lg);
+    padding: var(--space-lg);
+    text-align: center;
+    animation: popIn 0.3s ease;
+    width: 100%;
+    max-width: 350px;
+}
+
+@keyframes popIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.result-icon {
+    font-size: 3rem;
+    margin-bottom: var(--space-sm);
+}
+
+.result-icon.success {
+    color: var(--accent-success);
+}
+
+.result-icon.error {
+    color: var(--accent-error);
+}
+
+.result-title {
+    font-family: var(--font-mono);
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: var(--space-sm);
+}
+
+.result-title.success {
+    color: var(--accent-success);
+}
+
+.result-title.error {
+    color: var(--accent-error);
+}
+
+.result-message {
+    color: var(--text-secondary);
+    margin-bottom: var(--space-md);
+    font-size: 0.9rem;
+}
+
+.result-earnings {
+    font-family: var(--font-mono);
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: var(--space-md);
+}
+
+.result-earnings.positive {
+    color: var(--accent-success);
+}
+
+.result-earnings.negative {
+    color: var(--accent-error);
+}
+
+/* Inspection Modal */
+.inspection-content {
+    max-width: 100%;
+    max-height: 90vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: var(--space-sm);
+    border-bottom: 1px solid var(--bg-tertiary);
+    margin-bottom: var(--space-sm);
+}
+
+.modal-title {
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--accent-primary);
+}
+
+.modal-close {
+    width: 32px;
+    height: 32px;
+    font-size: 1.5rem;
+    color: var(--text-muted);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: color var(--transition-fast);
+}
+
+.modal-close:active {
+    color: var(--accent-error);
+}
+
+.inspection-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    flex: 1;
+    overflow: auto;
+}
+
+.inspection-document,
+.inspection-reference {
+    padding: var(--space-sm);
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-md);
+    font-size: 0.8rem;
+}
+
+.inspection-notes {
+    margin-top: var(--space-sm);
+    padding: var(--space-sm);
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-md);
+}
+
+.notes-title {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--accent-warning);
+    margin-bottom: var(--space-xs);
+}
+
+.notes-list {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+}
+
+.no-discrepancies {
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+/* ========================================
+   DAY END SCREEN
+   ======================================== */
+
+#dayend-screen {
+    background: var(--bg-primary);
+    justify-content: center;
+    align-items: center;
+    padding: var(--space-md);
+}
+
+.dayend-content {
+    width: 100%;
+    max-width: 400px;
+    padding: var(--space-lg);
+    animation: fadeInUp 0.5s ease-out;
+}
+
+.dayend-header {
+    text-align: center;
+    margin-bottom: var(--space-lg);
+}
+
+.dayend-title {
+    font-family: var(--font-mono);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--accent-primary);
+}
+
+.dayend-report {
+    background: var(--bg-secondary);
+    border: 2px solid var(--bg-tertiary);
+    border-radius: var(--radius-lg);
+    padding: var(--space-md);
+    margin-bottom: var(--space-lg);
+}
+
+.report-section {
+    margin-bottom: var(--space-md);
+}
+
+.report-section:last-child {
+    margin-bottom: 0;
+}
+
+.report-title {
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-sm);
+    padding-bottom: var(--space-xs);
+    border-bottom: 1px solid var(--bg-tertiary);
+}
+
+.report-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-sm);
+}
+
+.report-item {
+    text-align: center;
+    padding: var(--space-sm);
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-sm);
+}
+
+.report-label {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    margin-bottom: var(--space-xs);
+}
+
+.report-value {
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.report-value.violations {
+    color: var(--accent-error);
+}
+
+.finance-breakdown {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+}
+
+.finance-row {
+    display: flex;
+    justify-content: space-between;
+    padding: var(--space-xs) var(--space-sm);
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+}
+
+.finance-row .positive {
+    color: var(--accent-success);
+}
+
+.finance-row .negative {
+    color: var(--accent-error);
+}
+
+.finance-row.total-row {
+    background: var(--bg-card);
+    font-weight: 700;
+}
+
+.status-section {
+    text-align: center;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: var(--space-xs) var(--space-md);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    font-weight: 700;
+    border-radius: var(--radius-md);
+}
+
+.status-badge.success {
+    background: rgba(74, 222, 128, 0.2);
+    color: var(--accent-success);
+    border: 2px solid var(--accent-success);
+}
+
+.status-badge.warning {
+    background: rgba(251, 191, 36, 0.2);
+    color: var(--accent-warning);
+    border: 2px solid var(--accent-warning);
+}
+
+.status-badge.danger {
+    background: rgba(248, 113, 113, 0.2);
+    color: var(--accent-error);
+    border: 2px solid var(--accent-error);
+}
+
+/* ========================================
+   GAME OVER SCREEN
+   ======================================== */
+
+#gameover-screen {
+    background: radial-gradient(circle at center, #1a0a0a, var(--bg-dark));
+    justify-content: center;
+    align-items: center;
+    padding: var(--space-md);
+}
+
+.gameover-content {
+    text-align: center;
+    max-width: 350px;
+    padding: var(--space-lg);
+    animation: fadeInUp 0.8s ease-out;
+}
+
+.gameover-icon {
+    font-size: 4rem;
+    margin-bottom: var(--space-md);
+    animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-10px);
+    }
+
+    75% {
+        transform: translateX(10px);
+    }
+}
+
+.gameover-title {
+    font-family: var(--font-mono);
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--accent-error);
+    letter-spacing: 4px;
+    margin-bottom: var(--space-sm);
+}
+
+.gameover-message {
+    color: var(--text-secondary);
+    margin-bottom: var(--space-xl);
+    font-size: 0.9rem;
+}
+
+.gameover-stats {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-md);
+    margin-bottom: var(--space-xl);
+    flex-wrap: wrap;
+}
+
+.stat-item {
+    text-align: center;
+    min-width: 80px;
+}
+
+.stat-label {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    margin-bottom: var(--space-xs);
+}
+
+.stat-value {
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+/* ========================================
+   SCROLLBAR STYLES
+   ======================================== */
+
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--bg-card);
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--coffee-light);
+}
+
+/* ========================================
+   DESKTOP RESPONSIVE
+   ======================================== */
+
+@media (min-width: 768px) {
+    body {
+        font-size: 16px;
+    }
+
+    .game-title {
+        font-size: 3.5rem;
+        letter-spacing: 6px;
+    }
+
+    .mobile-tabs {
+        display: none;
+    }
+
+    .game-area {
+        display: grid;
+        grid-template-columns: 1fr 1.5fr 1fr;
+        gap: var(--space-md);
+        padding: var(--space-md);
+    }
+
+    .panel {
+        display: flex;
+        position: relative;
+        border: 1px solid var(--bg-tertiary);
+        border-radius: var(--radius-lg);
+    }
+
+    .panel.active {
+        display: flex;
+    }
+
+    .btn-action {
+        padding: var(--space-md) var(--space-2xl);
+        min-width: 140px;
+    }
+
+    .action-icon {
+        font-size: 1.5rem;
+    }
+
+    .action-label {
+        font-size: 1rem;
+    }
+
+    .stamp-container {
+        width: 120px;
+        height: 80px;
+    }
+
+    .stamp {
+        font-size: 1rem;
+    }
+
+    .inspection-body {
+        flex-direction: row;
+    }
+
+    .inspection-document,
+    .inspection-reference {
+        flex: 1;
+    }
+
+    .hud-value {
+        font-size: 1.2rem;
+    }
+
+    .order-code {
+        font-size: 0.85rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .game-area {
+        padding: var(--space-lg);
+        gap: var(--space-lg);
+    }
+}
+    </style>
+</head>
+<body>
+    <!-- INTRO SCREEN -->
+    <div id="intro-screen" class="screen active">
+        <div class="intro-content">
+            <div class="logo-container">
+                <div class="coffee-steam"><span></span><span></span><span></span></div>
+                <div class="logo-icon">☕</div>
+            </div>
+            <h1 class="game-title">AZERA ENJOY</h1>
+            <p class="game-subtitle">Kedai Kopi untuk Programmer</p>
+            <div class="intro-description">
+                <p>Selamat datang di <strong>Azera Code Café</strong>.</p>
+                <p>Kamu adalah barista. Programmer akan datang dengan pesanan kopi mereka.</p>
+                <p>Tugasmu: <em>Verifikasi setiap pesanan. Tangkap bug-nya. Sajikan kode-nya.</em></p>
+            </div>
+            <button id="start-btn" class="btn-primary">
+                <span class="btn-icon">▶</span>
+                <span>MULAI SHIFT</span>
+            </button>
+            <div class="intro-footer">
+                <span class="version">v1.0.0</span>
+                <button id="sound-toggle" class="sound-btn" title="Toggle Sound">🔊</button>
+                <span class="credits">Terinspirasi dari Papers, Please</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- DAY BRIEFING SCREEN -->
+    <div id="briefing-screen" class="screen">
+        <div class="briefing-content">
+            <div class="briefing-header">
+                <div class="day-badge">HARI <span id="briefing-day">1</span></div>
+                <div class="date-display" id="briefing-date">Senin, 10 Januari 2026</div>
+            </div>
+            <div class="briefing-scroll">
+                <div class="briefing-title">☕ BRIEFING HARIAN</div>
+                <div class="rules-container" id="daily-rules"></div>
+                <div class="targets-container">
+                    <div class="target-item">
+                        <span class="target-label">Target Hari Ini:</span>
+                        <span class="target-value" id="target-orders">Rp50.000</span>
+                    </div>
+                    <div class="target-item">
+                        <span class="target-label">Maks Pelanggaran:</span>
+                        <span class="target-value" id="max-violations">3</span>
+                    </div>
+                </div>
+            </div>
+            <button id="start-day-btn" class="btn-primary"><span>BUKA KEDAI</span></button>
+        </div>
+    </div>
+
+    <!-- MAIN GAME SCREEN -->
+    <div id="game-screen" class="screen">
+        <div class="game-hud">
+            <div class="hud-left">
+                <div class="hud-item day-display">
+                    <span class="hud-label">HARI</span>
+                    <span class="hud-value" id="current-day">1</span>
+                </div>
+                <div class="hud-item time-display">
+                    <span class="hud-label">JAM</span>
+                    <span class="hud-value" id="current-time">09:00</span>
+                </div>
+            </div>
+            <div class="hud-center">
+                <div class="hud-item money-display">
+                    <span class="hud-label">PENDAPATAN</span>
+                    <span class="hud-value money" id="current-money">Rp0</span>
+                </div>
+            </div>
+            <div class="hud-right">
+                <div class="hud-item violations-display">
+                    <span class="hud-label">PELANGGARAN</span>
+                    <span class="hud-value violations" id="violations">0/3</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="mobile-tabs">
+            <button class="mobile-tab active" data-panel="customer">👤 Pelanggan</button>
+            <button class="mobile-tab" data-panel="order">📋 Pesanan</button>
+            <button class="mobile-tab" data-panel="rules">📖 Aturan</button>
+        </div>
+
+        <div class="game-area">
+            <div class="panel customer-panel active" id="panel-customer">
+                <div class="panel-header"><span class="panel-title">👤 PELANGGAN</span></div>
+                <div class="customer-area" id="customer-area">
+                    <div class="empty-state">
+                        <span class="empty-icon">🚪</span>
+                        <p>Menunggu pelanggan...</p>
+                        <button id="next-customer-btn" class="btn-secondary">PELANGGAN BERIKUTNYA</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel order-panel" id="panel-order">
+                <div class="panel-header">
+                    <span class="panel-title">📋 SLIP PESANAN</span>
+                    <button id="inspect-btn" class="btn-small" disabled>🔍 PERIKSA</button>
+                </div>
+                <div class="order-area" id="order-area">
+                    <div class="empty-state">
+                        <span class="empty-icon">📄</span>
+                        <p>Belum ada pesanan</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel rules-panel" id="panel-rules">
+                <div class="panel-header"><span class="panel-title">📖 BUKU ATURAN</span></div>
+                <div class="rules-area" id="rules-area">
+                    <div class="rulebook-tabs">
+                        <button class="tab-btn active" data-tab="rules">Aturan</button>
+                        <button class="tab-btn" data-tab="menu">Menu</button>
+                        <button class="tab-btn" data-tab="members">Member</button>
+                    </div>
+                    <div class="rulebook-content" id="rulebook-content"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="action-panel">
+            <div class="action-buttons">
+                <button id="reject-btn" class="btn-action btn-reject" disabled>
+                    <span class="action-icon">❌</span>
+                    <span class="action-label">TOLAK</span>
+                </button>
+                <div class="stamp-container" id="stamp-container">
+                    <div class="stamp stamp-approved" id="stamp-approved">✓ DITERIMA</div>
+                    <div class="stamp stamp-rejected" id="stamp-rejected">✗ DITOLAK</div>
+                </div>
+                <button id="approve-btn" class="btn-action btn-approve" disabled>
+                    <span class="action-icon">✓</span>
+                    <span class="action-label">TERIMA</span>
+                </button>
+            </div>
+            <div class="reason-selector" id="reason-selector" style="display: none;">
+                <div class="reason-title">Pilih alasan penolakan:</div>
+                <div class="reason-buttons" id="reason-buttons"></div>
+                <button id="cancel-reject-btn" class="btn-cancel">Batal</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- RESULT POPUP -->
+    <div id="result-popup" class="popup">
+        <div class="popup-content result-content">
+            <div class="result-icon" id="result-icon">✓</div>
+            <div class="result-title" id="result-title">BENAR!</div>
+            <div class="result-message" id="result-message">Pesanan diproses dengan benar.</div>
+            <div class="result-earnings" id="result-earnings">+Rp5.000</div>
+            <button id="continue-btn" class="btn-primary">LANJUT</button>
+        </div>
+    </div>
+
+    <!-- DAY END SCREEN -->
+    <div id="dayend-screen" class="screen">
+        <div class="dayend-content">
+            <div class="dayend-header">
+                <div class="dayend-title">AKHIR HARI <span id="end-day">1</span></div>
+            </div>
+            <div class="dayend-report">
+                <div class="report-section">
+                    <div class="report-title">📊 LAPORAN HARIAN</div>
+                    <div class="report-grid">
+                        <div class="report-item">
+                            <span class="report-label">Pelanggan Dilayani</span>
+                            <span class="report-value" id="report-customers">0</span>
+                        </div>
+                        <div class="report-item">
+                            <span class="report-label">Pesanan Diterima</span>
+                            <span class="report-value" id="report-approved">0</span>
+                        </div>
+                        <div class="report-item">
+                            <span class="report-label">Pesanan Ditolak</span>
+                            <span class="report-value" id="report-rejected">0</span>
+                        </div>
+                        <div class="report-item">
+                            <span class="report-label">Pelanggaran</span>
+                            <span class="report-value violations" id="report-violations">0</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="report-section finances">
+                    <div class="report-title">💰 KEUANGAN</div>
+                    <div class="finance-breakdown">
+                        <div class="finance-row">
+                            <span>Pendapatan Hari Ini</span>
+                            <span class="positive" id="finance-earnings">+Rp0</span>
+                        </div>
+                        <div class="finance-row">
+                            <span>Tips Diterima</span>
+                            <span class="positive" id="finance-tips">+Rp0</span>
+                        </div>
+                        <div class="finance-row">
+                            <span>Denda Pelanggaran</span>
+                            <span class="negative" id="finance-penalties">-Rp0</span>
+                        </div>
+                        <div class="finance-row total-row">
+                            <span>TOTAL BERSIH</span>
+                            <span id="finance-total">Rp0</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="report-section status-section">
+                    <div class="status-badge" id="day-status"></div>
+                </div>
+            </div>
+            <button id="next-day-btn" class="btn-primary"><span>HARI BERIKUTNYA</span></button>
+        </div>
+    </div>
+
+    <!-- GAME OVER SCREEN -->
+    <div id="gameover-screen" class="screen">
+        <div class="gameover-content">
+            <div class="gameover-icon">💀</div>
+            <h1 class="gameover-title">DIPECAT</h1>
+            <p class="gameover-message" id="gameover-message">Kamu telah dipecat dari Azera Code Café.</p>
+            <div class="gameover-stats">
+                <div class="stat-item">
+                    <span class="stat-label">Hari Bertahan</span>
+                    <span class="stat-value" id="final-days">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Total Pendapatan</span>
+                    <span class="stat-value" id="final-money">Rp0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Pelanggan Dilayani</span>
+                    <span class="stat-value" id="final-customers">0</span>
+                </div>
+            </div>
+            <button id="restart-btn" class="btn-primary">COBA LAGI</button>
+        </div>
+    </div>
+
+    <!-- Inspection Modal -->
+    <div id="inspection-modal" class="modal">
+        <div class="modal-content inspection-content">
+            <div class="modal-header">
+                <span class="modal-title">🔍 MODE INSPEKSI</span>
+                <button class="modal-close" id="close-inspection">&times;</button>
+            </div>
+            <div class="inspection-body">
+                <div class="inspection-document" id="inspection-document"></div>
+                <div class="inspection-reference" id="inspection-reference"></div>
+            </div>
+            <div class="inspection-notes">
+                <div class="notes-title">📝 Ketidaksesuaian Ditemukan:</div>
+                <div class="notes-list" id="discrepancies-list">
+                    <p class="no-discrepancies">Klik item yang mencurigakan untuk menyorot</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+// ========================================
+// AZERA ENJOY - Sound Manager
+// Menggunakan Web Audio API (no external files!)
+// ========================================
+
+class SoundManager {
+    constructor() {
+        this.audioContext = null;
+        this.enabled = true;
+        this.volume = 0.3;
+        this.initialized = false;
+    }
+
+    init() {
+        if (this.initialized) return;
+
+        try {
+            this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            this.initialized = true;
+        } catch (e) {
+            console.warn('Web Audio API tidak didukung');
+            this.enabled = false;
+        }
+    }
+
+    // Resume audio context (required after user interaction)
+    resume() {
+        if (this.audioContext && this.audioContext.state === 'suspended') {
+            this.audioContext.resume();
+        }
+    }
+
+    toggle() {
+        this.enabled = !this.enabled;
+        return this.enabled;
+    }
+
+    setVolume(vol) {
+        this.volume = Math.max(0, Math.min(1, vol));
+    }
+
+    // ========================================
+    // SOUND GENERATORS
+    // ========================================
+
+    // Play a beep with specific frequency and duration
+    playTone(frequency, duration, type = 'sine', volumeMultiplier = 1) {
+        if (!this.enabled || !this.audioContext) return;
+
+        const oscillator = this.audioContext.createOscillator();
+        const gainNode = this.audioContext.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(this.audioContext.destination);
+
+        oscillator.frequency.value = frequency;
+        oscillator.type = type;
+
+        const now = this.audioContext.currentTime;
+        const vol = this.volume * volumeMultiplier;
+
+        // Attack
+        gainNode.gain.setValueAtTime(0, now);
+        gainNode.gain.linearRampToValueAtTime(vol, now + 0.01);
+
+        // Decay
+        gainNode.gain.exponentialRampToValueAtTime(vol * 0.5, now + duration * 0.3);
+
+        // Release
+        gainNode.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+        oscillator.start(now);
+        oscillator.stop(now + duration);
+    }
+
+    // Play noise burst (for impact sounds)
+    playNoise(duration, volumeMultiplier = 1) {
+        if (!this.enabled || !this.audioContext) return;
+
+        const bufferSize = this.audioContext.sampleRate * duration;
+        const buffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
+        const data = buffer.getChannelData(0);
+
+        for (let i = 0; i < bufferSize; i++) {
+            data[i] = Math.random() * 2 - 1;
+        }
+
+        const source = this.audioContext.createBufferSource();
+        const gainNode = this.audioContext.createGain();
+        const filter = this.audioContext.createBiquadFilter();
+
+        source.buffer = buffer;
+        filter.type = 'lowpass';
+        filter.frequency.value = 1000;
+
+        source.connect(filter);
+        filter.connect(gainNode);
+        gainNode.connect(this.audioContext.destination);
+
+        const now = this.audioContext.currentTime;
+        const vol = this.volume * volumeMultiplier * 0.3;
+
+        gainNode.gain.setValueAtTime(vol, now);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+        source.start(now);
+    }
+
+    // ========================================
+    // GAME SOUND EFFECTS
+    // ========================================
+
+    // Button click
+    click() {
+        this.playTone(800, 0.05, 'sine', 0.5);
+    }
+
+    // Customer arrives (doorbell)
+    customerArrive() {
+        this.playTone(523, 0.15, 'sine', 0.7); // C5
+        setTimeout(() => this.playTone(659, 0.15, 'sine', 0.7), 100); // E5
+        setTimeout(() => this.playTone(784, 0.2, 'sine', 0.7), 200); // G5
+    }
+
+    // Order stamp - approved
+    stampApprove() {
+        this.playNoise(0.1, 0.8);
+        setTimeout(() => this.playTone(523, 0.1, 'square', 0.5), 50);
+        setTimeout(() => this.playTone(659, 0.1, 'square', 0.5), 100);
+        setTimeout(() => this.playTone(784, 0.15, 'square', 0.5), 150);
+    }
+
+    // Order stamp - rejected
+    stampReject() {
+        this.playNoise(0.15, 1);
+        setTimeout(() => this.playTone(300, 0.1, 'square', 0.6), 50);
+        setTimeout(() => this.playTone(250, 0.15, 'square', 0.6), 120);
+    }
+
+    // Correct decision
+    correct() {
+        this.playTone(440, 0.1, 'sine', 0.6); // A4
+        setTimeout(() => this.playTone(554, 0.1, 'sine', 0.6), 80); // C#5
+        setTimeout(() => this.playTone(659, 0.15, 'sine', 0.7), 160); // E5
+        setTimeout(() => this.playTone(880, 0.25, 'sine', 0.8), 240); // A5
+    }
+
+    // Wrong decision (violation)
+    violation() {
+        this.playTone(200, 0.15, 'sawtooth', 0.5);
+        setTimeout(() => this.playTone(150, 0.15, 'sawtooth', 0.5), 150);
+        setTimeout(() => this.playTone(100, 0.3, 'sawtooth', 0.6), 300);
+    }
+
+    // Money sound (ka-ching!)
+    money() {
+        this.playTone(1200, 0.05, 'sine', 0.4);
+        setTimeout(() => this.playTone(1500, 0.05, 'sine', 0.4), 50);
+        setTimeout(() => this.playTone(1800, 0.1, 'sine', 0.5), 100);
+    }
+
+    // Day start
+    dayStart() {
+        this.playTone(262, 0.15, 'sine', 0.5); // C4
+        setTimeout(() => this.playTone(330, 0.15, 'sine', 0.5), 150); // E4
+        setTimeout(() => this.playTone(392, 0.15, 'sine', 0.5), 300); // G4
+        setTimeout(() => this.playTone(523, 0.3, 'sine', 0.6), 450); // C5
+    }
+
+    // Day end
+    dayEnd() {
+        this.playTone(523, 0.2, 'sine', 0.5); // C5
+        setTimeout(() => this.playTone(440, 0.2, 'sine', 0.5), 200); // A4
+        setTimeout(() => this.playTone(349, 0.2, 'sine', 0.5), 400); // F4
+        setTimeout(() => this.playTone(262, 0.4, 'sine', 0.6), 600); // C4
+    }
+
+    // Game over
+    gameOver() {
+        this.playTone(440, 0.3, 'sawtooth', 0.4);
+        setTimeout(() => this.playTone(370, 0.3, 'sawtooth', 0.4), 300);
+        setTimeout(() => this.playTone(311, 0.3, 'sawtooth', 0.4), 600);
+        setTimeout(() => this.playTone(262, 0.5, 'sawtooth', 0.5), 900);
+    }
+
+    // Tab switch
+    tabSwitch() {
+        this.playTone(600, 0.03, 'sine', 0.3);
+    }
+
+    // Hover (subtle)
+    hover() {
+        this.playTone(1000, 0.02, 'sine', 0.15);
+    }
+
+    // Paper slide
+    paperSlide() {
+        this.playNoise(0.2, 0.3);
+    }
+
+    // Coffee pour (ambient)
+    coffeePour() {
+        for (let i = 0; i < 5; i++) {
+            setTimeout(() => {
+                this.playNoise(0.1, 0.2);
+            }, i * 100);
+        }
+    }
+}
+
+// Create global sound manager instance
+const soundManager = new SoundManager();
+
+// Export
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = SoundManager;
+}
+
+    </script>
+    <script>
+// ========================================
+// AZERA ENJOY - Data Game (Bahasa Indonesia)
+// ========================================
+
+const GAME_DATA = {
+    // Menu Kopi
+    menu: [
+        { id: 'espresso', name: 'Espresso', price: 15000, caffeine: 2, minTier: 'free' },
+        { id: 'americano', name: 'Americano', price: 18000, caffeine: 2, minTier: 'free' },
+        { id: 'latte', name: 'Latte', price: 22000, caffeine: 1, minTier: 'free' },
+        { id: 'cappuccino', name: 'Cappuccino', price: 22000, caffeine: 1, minTier: 'free' },
+        { id: 'mocha', name: 'Mocha', price: 25000, caffeine: 2, minTier: 'free' },
+        { id: 'cold_brew', name: 'Cold Brew', price: 25000, caffeine: 3, minTier: 'pro' },
+        { id: 'nitro', name: 'Nitro Cold Brew', price: 32000, caffeine: 4, minTier: 'pro' },
+        { id: 'affogato', name: 'Affogato', price: 35000, caffeine: 2, minTier: 'pro' },
+        { id: 'turkish', name: 'Kopi Turki', price: 28000, caffeine: 3, minTier: 'enterprise' },
+        { id: 'bulletproof', name: 'Bulletproof Coffee', price: 40000, caffeine: 5, minTier: 'enterprise' },
+        { id: 'debug_brew', name: 'Debug Brew ☕️', price: 50000, caffeine: 6, minTier: 'enterprise' }
+    ],
+
+    // Tier Membership
+    tiers: {
+        free: { name: 'Free Tier', discount: 0, maxCaffeine: 6, color: '#888' },
+        pro: { name: 'Pro Tier', discount: 10, maxCaffeine: 10, color: '#60a5fa' },
+        enterprise: { name: 'Enterprise', discount: 20, maxCaffeine: 15, color: '#a78bfa' }
+    },
+
+    // Role Pelanggan
+    roles: [
+        { id: 'intern', name: 'Anak Magang', emoji: '🐣', typoChance: 0.4, budgetRange: [25000, 50000] },
+        { id: 'junior', name: 'Junior Dev', emoji: '👶', typoChance: 0.3, budgetRange: [40000, 80000] },
+        { id: 'midlevel', name: 'Mid-Level Dev', emoji: '👨‍💻', typoChance: 0.15, budgetRange: [60000, 120000] },
+        { id: 'senior', name: 'Senior Dev', emoji: '👴', typoChance: 0.05, budgetRange: [80000, 200000] },
+        { id: 'techlead', name: 'Tech Lead', emoji: '🎖️', typoChance: 0.02, budgetRange: [100000, 250000] },
+        { id: 'devops', name: 'DevOps Engineer', emoji: '🔧', typoChance: 0.1, budgetRange: [80000, 180000] },
+        { id: 'qa', name: 'QA Engineer', emoji: '🔍', typoChance: 0.01, budgetRange: [60000, 120000] },
+        { id: 'pm', name: 'Product Manager', emoji: '📊', typoChance: 0.25, budgetRange: [80000, 150000] },
+        { id: 'designer', name: 'UI/UX Designer', emoji: '🎨', typoChance: 0.2, budgetRange: [60000, 130000] },
+        { id: 'freelancer', name: 'Freelancer', emoji: '💼', typoChance: 0.2, budgetRange: [30000, 300000] }
+    ],
+
+    // Nama Depan
+    firstNames: [
+        'Adi', 'Budi', 'Citra', 'Dimas', 'Eka', 'Fajar', 'Gilang', 'Hendra',
+        'Ivan', 'Joko', 'Kevin', 'Lukman', 'Maya', 'Naufal', 'Oscar', 'Putra',
+        'Reza', 'Sinta', 'Tono', 'Umar', 'Vina', 'Wawan', 'Yudi', 'Zahra',
+        'Agus', 'Bayu', 'Dewi', 'Edi', 'Fitri', 'Gunawan', 'Haris', 'Indra'
+    ],
+
+    // Nama Belakang
+    lastNames: [
+        'Pratama', 'Wijaya', 'Kusuma', 'Saputra', 'Hidayat', 'Santoso', 'Nugroho', 'Putra',
+        'Permana', 'Suryadi', 'Hartono', 'Setiawan', 'Wibowo', 'Pranoto', 'Susanto', 'Siregar',
+        'Hakim', 'Ramadhan', 'Firmansyah', 'Aditya', 'Cahyono', 'Kurniawan', 'Utomo', 'Perdana'
+    ],
+
+    // Dialog
+    dialogues: {
+        normal: [
+            "Butuh kopi buat compile pikiran gue.",
+            "Kode gue gak jalan tanpa kafein.",
+            "Satu kopi dulu, baru fix bug itu.",
+            "Udah 3 jam sejak kopi terakhir.",
+            "Deadline besok. Kopi, dong.",
+            "console.log('butuh kopi');",
+            "// TODO: minum kopi dulu",
+            "Otak gue butuh refresh. Kopi refresh.",
+            "Gabisa debug kalo gelas kosong.",
+            "Kopi: minuman energi pertama."
+        ],
+        burnout: [
+            "*nguap* Udah coding 20 jam...",
+            "Belum tidur sejak sprint mulai...",
+            "*mata hampir merem*",
+            "Mungkin... satu gelas lagi...",
+            "Kayaknya gue liat bug merayap di layar...",
+            "Ini hari Senin apa Jumat? Gue bingung..."
+        ],
+        highCaffeine: [
+            "*tangan gemetar* Satu espresso lagi...",
+            "Gue bisa rasain detak jantung di bola mata!",
+            "*ngomong super cepat* Kopi kopi kopi!",
+            "Tidur itu buat yang gak ada deadline!",
+            "*kedutan* Kode... dia ngomong sama gue sekarang..."
+        ],
+        rejected: [
+            "Apa? Gue BUTUH kopi ini!",
+            "Ini diskriminasi terhadap developer!",
+            "Produktivitas gue bakal crash!",
+            "404: Kopi Tidak Ditemukan... di tangan gue.",
+            "return kesedihan;",
+            "Gue bikin kopi sendiri aja deh!"
+        ],
+        approved: [
+            "Makasih! Waktunya deploy fitur!",
+            "Mantap! Sekarang bisa fix regex itu.",
+            "Penyelamat hidup nih! *kasih tips banyak*",
+            "Akhirnya! Mari mulai coding!",
+            "console.log('kebahagiaan');",
+            "Ini yang gue butuhin!"
+        ]
+    },
+
+    // Kode Promo
+    promoCodes: {
+        'DEBUGME': { discount: 15, validDays: [1, 2, 3, 4, 5], minOrder: 25000 },
+        'SHIPIT': { discount: 20, validDays: [5], minOrder: 50000 },
+        'HOTFIX': { discount: 10, validDays: [1, 2, 3, 4, 5], minOrder: 0 },
+        'SPRINT': { discount: 25, validDays: [1], minOrder: 60000 },
+        'DEVOPS': { discount: 30, validDays: [3], minOrder: 80000 },
+        'COMPILE': { discount: 5, validDays: [1, 2, 3, 4, 5], minOrder: 0 },
+        'REFACT0R': { discount: 0, validDays: [], minOrder: 0 }, // Invalid - typo
+        'NGOPI': { discount: 15, validDays: [2, 4], minOrder: 35000 }
+    },
+
+    // Typo umum (untuk mendeteksi bug dalam pesanan)
+    typos: {
+        'espresso': ['expresso', 'espreso', 'espresoo', 'esspresso'],
+        'americano': ['americno', 'amerciano', 'americanoo', 'amaricano'],
+        'latte': ['latee', 'lattee', 'late', 'ltte'],
+        'cappuccino': ['capuccino', 'cappucino', 'cappucinno', 'capucino'],
+        'mocha': ['mocah', 'moca', 'mokka', 'moha'],
+        'cold_brew': ['cold brew', 'coldbrew', 'cold_bew', 'col_brew'],
+        'nitro': ['nitrio', 'nito', 'nitrro', 'nitr0'],
+        'affogato': ['afogato', 'affogatto', 'affagato', 'afogatto'],
+        'turkish': ['turksh', 'turkissh', 'turksih', 'turiksh'],
+        'bulletproof': ['bulletprof', 'bullerproof', 'bulletpoof', 'bulletprof'],
+        'debug_brew': ['debug brew', 'debub_brew', 'debug_bew', 'debg_brew']
+    },
+
+    // Aturan Harian (kumulatif - setiap hari menambahkan aturan baru)
+    dailyRules: [
+        // Hari 1 - Aturan dasar
+        [
+            { icon: '☕', text: 'Verifikasi <strong>pesanan kopi</strong> sesuai menu kami', type: 'base' },
+            { icon: '💰', text: 'Cek apakah pelanggan punya <strong>budget cukup</strong>', type: 'base' },
+            { icon: '🎫', text: 'Verifikasi <strong>tier membership</strong> mengizinkan pesanan', type: 'base' }
+        ],
+        // Hari 2 - Batas kafein
+        [
+            { icon: '⚡', text: 'BARU: Cek <strong>batas kafein harian</strong>. Free: 6, Pro: 10, Enterprise: 15', type: 'new' }
+        ],
+        // Hari 3 - Kode promo
+        [
+            { icon: '🏷️', text: 'BARU: Validasi <strong>kode promo</strong>. Cek hari berlaku dan min order!', type: 'new' }
+        ],
+        // Hari 4 - Deteksi burnout
+        [
+            { icon: '😴', text: 'BARU: <strong>Pelanggan burnout</strong> harus DITOLAK. Tidak boleh kafein lagi!', type: 'new' }
+        ],
+        // Hari 5 - Deteksi typo
+        [
+            { icon: '🐛', text: 'BARU: Deteksi <strong>typo/bug</strong> di nama pesanan. Tolak item tidak valid!', type: 'new' }
+        ],
+        // Hari 6 - Spesial Jumat
+        [
+            { icon: '🎉', text: 'BARU: <strong>Spesial Jumat</strong>! Semua member Enterprise dapat diskon ekstra 10%', type: 'new' }
+        ],
+        // Hari 7 - Verifikasi combo
+        [
+            { icon: '📦', text: 'BARU: <strong>Pesanan combo</strong> maksimal 3 item per order', type: 'new' }
+        ]
+    ],
+
+    // Alasan Penolakan
+    rejectionReasons: [
+        { id: 'insufficient_budget', text: 'Budget Tidak Cukup' },
+        { id: 'invalid_tier', text: 'Tier Membership Tidak Valid' },
+        { id: 'caffeine_limit', text: 'Batas Kafein Terlampaui' },
+        { id: 'invalid_promo', text: 'Kode Promo Tidak Valid' },
+        { id: 'burnout', text: 'Pelanggan Burnout Terdeteksi' },
+        { id: 'typo_bug', text: 'Pesanan Mengandung Bug/Typo' },
+        { id: 'invalid_item', text: 'Item Tidak Ada di Menu' },
+        { id: 'too_many_items', text: 'Terlalu Banyak Item' }
+    ],
+
+    // Target dan pengaturan harian
+    daySettings: [
+        { target: 150000, customers: 6, maxViolations: 3 },   // Hari 1
+        { target: 250000, customers: 8, maxViolations: 3 },   // Hari 2
+        { target: 350000, customers: 10, maxViolations: 3 },  // Hari 3
+        { target: 450000, customers: 12, maxViolations: 2 },  // Hari 4
+        { target: 600000, customers: 14, maxViolations: 2 },  // Hari 5
+        { target: 750000, customers: 16, maxViolations: 2 },  // Hari 6
+        { target: 900000, customers: 18, maxViolations: 1 }   // Hari 7+
+    ],
+
+    // Nama hari dalam Bahasa Indonesia
+    dayNames: ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'],
+    monthNames: ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+        'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
+};
+
+// Helper untuk format Rupiah
+function formatRupiah(amount) {
+    return 'Rp' + amount.toLocaleString('id-ID');
+}
+
+// Export for use in game.js
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = GAME_DATA;
+}
+
+    </script>
+    <script>
+// ========================================
+// AZERA ENJOY - Logic Game (Bahasa Indonesia)
+// ========================================
+
+class AzeraGame {
+    constructor() {
+        // State Game
+        this.state = {
+            day: 1,
+            money: 0,
+            totalMoney: 0,
+            violations: 0,
+            customersServed: 0,
+            customersApproved: 0,
+            customersRejected: 0,
+            todayEarnings: 0,
+            todayTips: 0,
+            todayPenalties: 0,
+            currentCustomer: null,
+            currentOrder: null,
+            dayCustomerIndex: 0,
+            isGameOver: false,
+            activeRules: []
+        };
+
+        // Tracking kafein pelanggan untuk hari ini
+        this.caffeineTracker = new Map();
+
+        // DOM Elements
+        this.screens = {
+            intro: document.getElementById('intro-screen'),
+            briefing: document.getElementById('briefing-screen'),
+            game: document.getElementById('game-screen'),
+            dayend: document.getElementById('dayend-screen'),
+            gameover: document.getElementById('gameover-screen')
+        };
+
+        this.elements = {
+            // Briefing
+            briefingDay: document.getElementById('briefing-day'),
+            briefingDate: document.getElementById('briefing-date'),
+            dailyRules: document.getElementById('daily-rules'),
+            targetOrders: document.getElementById('target-orders'),
+            maxViolations: document.getElementById('max-violations'),
+
+            // Game HUD
+            currentDay: document.getElementById('current-day'),
+            currentTime: document.getElementById('current-time'),
+            currentMoney: document.getElementById('current-money'),
+            violations: document.getElementById('violations'),
+            customersServed: document.getElementById('customers-served'),
+
+            // Panels
+            customerArea: document.getElementById('customer-area'),
+            orderArea: document.getElementById('order-area'),
+            rulebookContent: document.getElementById('rulebook-content'),
+
+            // Actions
+            nextCustomerBtn: document.getElementById('next-customer-btn'),
+            inspectBtn: document.getElementById('inspect-btn'),
+            approveBtn: document.getElementById('approve-btn'),
+            rejectBtn: document.getElementById('reject-btn'),
+            reasonSelector: document.getElementById('reason-selector'),
+            reasonButtons: document.getElementById('reason-buttons'),
+            stampApproved: document.getElementById('stamp-approved'),
+            stampRejected: document.getElementById('stamp-rejected'),
+
+            // Result Popup
+            resultPopup: document.getElementById('result-popup'),
+            resultIcon: document.getElementById('result-icon'),
+            resultTitle: document.getElementById('result-title'),
+            resultMessage: document.getElementById('result-message'),
+            resultEarnings: document.getElementById('result-earnings'),
+            continueBtn: document.getElementById('continue-btn'),
+
+            // Day End
+            endDay: document.getElementById('end-day'),
+            reportCustomers: document.getElementById('report-customers'),
+            reportApproved: document.getElementById('report-approved'),
+            reportRejected: document.getElementById('report-rejected'),
+            reportViolations: document.getElementById('report-violations'),
+            financeEarnings: document.getElementById('finance-earnings'),
+            financeTips: document.getElementById('finance-tips'),
+            financePenalties: document.getElementById('finance-penalties'),
+            financeTotal: document.getElementById('finance-total'),
+            dayStatus: document.getElementById('day-status'),
+
+            // Game Over
+            gameoverMessage: document.getElementById('gameover-message'),
+            finalDays: document.getElementById('final-days'),
+            finalMoney: document.getElementById('final-money'),
+            finalCustomers: document.getElementById('final-customers'),
+
+            // Inspection Modal
+            inspectionModal: document.getElementById('inspection-modal'),
+            inspectionDocument: document.getElementById('inspection-document'),
+            inspectionReference: document.getElementById('inspection-reference'),
+            discrepanciesList: document.getElementById('discrepancies-list')
+        };
+
+        this.panels = {
+            customer: document.getElementById('panel-customer'),
+            order: document.getElementById('panel-order'),
+            rules: document.getElementById('panel-rules')
+        };
+
+        this.init();
+    }
+
+    // Safe element text content setter
+    safeSetText(element, text) {
+        if (element) element.textContent = text;
+    }
+
+    // Safe element innerHTML setter
+    safeSetHTML(element, html) {
+        if (element) element.innerHTML = html;
+    }
+
+    init() {
+        try {
+            this.bindEvents();
+            this.updateRulebook('rules');
+            this.setActivePanel('customer');
+        } catch (error) {
+            console.error('Game init error:', error);
+        }
+    }
+
+    bindEvents() {
+        // Start button - also initializes audio context
+        document.getElementById('start-btn').addEventListener('click', () => {
+            soundManager.init();
+            soundManager.resume();
+            soundManager.click();
+            this.showBriefing();
+        });
+        document.getElementById('start-day-btn').addEventListener('click', () => {
+            soundManager.click();
+            soundManager.dayStart();
+            this.startDay();
+        });
+
+        // Sound toggle button
+        const soundToggle = document.getElementById('sound-toggle');
+        if (soundToggle) {
+            soundToggle.addEventListener('click', () => {
+                soundManager.init();
+                const enabled = soundManager.toggle();
+                soundToggle.textContent = enabled ? '🔊' : '🔇';
+                soundToggle.classList.toggle('muted', !enabled);
+                if (enabled) soundManager.click();
+            });
+        }
+
+        // Action buttons
+        this.elements.approveBtn.addEventListener('click', () => {
+            soundManager.click();
+            this.handleApprove();
+        });
+        this.elements.rejectBtn.addEventListener('click', () => {
+            soundManager.click();
+            this.showReasonSelector();
+        });
+        this.elements.inspectBtn.addEventListener('click', () => {
+            soundManager.click();
+            this.showInspection();
+        });
+
+        // Continue button
+        this.elements.continueBtn.addEventListener('click', () => {
+            soundManager.click();
+            this.hideResultPopup();
+        });
+
+        // Next day
+        document.getElementById('next-day-btn').addEventListener('click', () => {
+            soundManager.click();
+            soundManager.dayStart();
+            this.nextDay();
+        });
+
+        // Restart
+        document.getElementById('restart-btn').addEventListener('click', () => {
+            soundManager.click();
+            this.restart();
+        });
+
+        // Close inspection
+        document.getElementById('close-inspection').addEventListener('click', () => this.hideInspection());
+
+        // Cancel reject
+        const cancelBtn = document.getElementById('cancel-reject-btn');
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', () => {
+                this.elements.reasonSelector.style.display = 'none';
+            });
+        }
+
+        // Rulebook tabs
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                soundManager.tabSwitch();
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                this.updateRulebook(e.target.dataset.tab);
+            });
+        });
+
+        // Mobile tabs
+        document.querySelectorAll('.mobile-tab').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                soundManager.tabSwitch();
+                document.querySelectorAll('.mobile-tab').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                this.setActivePanel(e.target.dataset.panel);
+            });
+        });
+
+        // Keyboard shortcuts (for desktop)
+        document.addEventListener('keydown', (e) => {
+            if (this.state.currentOrder && !this.elements.resultPopup.classList.contains('show')) {
+                if (e.key === 'a' || e.key === 'A') {
+                    this.handleApprove();
+                } else if (e.key === 'r' || e.key === 'R') {
+                    this.showReasonSelector();
+                }
+            }
+        });
+
+        // Touch feedback
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('touchstart', () => {
+                btn.style.transform = 'scale(0.98)';
+            });
+            btn.addEventListener('touchend', () => {
+                btn.style.transform = '';
+            });
+        });
+    }
+
+    setActivePanel(panelName) {
+        Object.values(this.panels).forEach(panel => {
+            if (panel) panel.classList.remove('active');
+        });
+        if (this.panels[panelName]) {
+            this.panels[panelName].classList.add('active');
+        }
+    }
+
+    // Helper to safely update mobile tab active states
+    setActiveMobileTab(activePanel) {
+        document.querySelectorAll('.mobile-tab').forEach(tab => {
+            if (tab.dataset.panel === activePanel) {
+                tab.classList.add('active');
+            } else {
+                tab.classList.remove('active');
+            }
+        });
+    }
+
+    // ========================================
+    // SCREEN MANAGEMENT
+    // ========================================
+
+    showScreen(screenName) {
+        Object.values(this.screens).forEach(screen => {
+            screen.classList.remove('active');
+        });
+        this.screens[screenName].classList.add('active');
+    }
+
+    // ========================================
+    // GAME FLOW
+    // ========================================
+
+    showBriefing() {
+        this.updateBriefing();
+        this.showScreen('briefing');
+    }
+
+    updateBriefing() {
+        const day = this.state.day;
+        const settings = this.getDaySettings();
+
+        this.elements.briefingDay.textContent = day;
+        this.elements.briefingDate.textContent = this.getDateString();
+        this.elements.targetOrders.textContent = formatRupiah(settings.target);
+        this.elements.maxViolations.textContent = settings.maxViolations;
+
+        // Build active rules
+        this.state.activeRules = [];
+        for (let i = 0; i < Math.min(day, GAME_DATA.dailyRules.length); i++) {
+            this.state.activeRules = [...this.state.activeRules, ...GAME_DATA.dailyRules[i]];
+        }
+
+        // Render rules
+        const rulesHtml = this.state.activeRules.map(rule => `
+            <div class="rule-item ${rule.type === 'new' && day > 1 ? 'new' : ''}">
+                <span class="rule-icon">${rule.icon}</span>
+                <span class="rule-text">${rule.text}</span>
+            </div>
+        `).join('');
+
+        this.elements.dailyRules.innerHTML = rulesHtml;
+    }
+
+    startDay() {
+        // Reset daily stats
+        this.state.todayEarnings = 0;
+        this.state.todayTips = 0;
+        this.state.todayPenalties = 0;
+        this.state.dayCustomerIndex = 0;
+        this.caffeineTracker.clear();
+
+        // Update HUD
+        this.updateHUD();
+
+        // Show game screen
+        this.showScreen('game');
+
+        // Set active panel to customer
+        this.setActivePanel('customer');
+
+        // Show empty customer area with next button
+        this.showEmptyCustomerArea();
+    }
+
+    showEmptyCustomerArea() {
+        this.elements.customerArea.innerHTML = `
+            <div class="empty-state">
+                <span class="empty-icon">🚪</span>
+                <p>Menunggu pelanggan...</p>
+                <button id="next-customer-btn" class="btn-secondary">PELANGGAN BERIKUTNYA</button>
+            </div>
+        `;
+
+        this.elements.orderArea.innerHTML = `
+            <div class="empty-state">
+                <span class="empty-icon">📄</span>
+                <p>Belum ada pesanan</p>
+            </div>
+        `;
+
+        // Rebind next customer button
+        document.getElementById('next-customer-btn').addEventListener('click', () => {
+            soundManager.click();
+            this.nextCustomer();
+        });
+
+        // Disable action buttons
+        this.toggleActionButtons(false);
+    }
+
+    nextCustomer() {
+        const settings = this.getDaySettings();
+
+        // Check if day is over
+        if (this.state.dayCustomerIndex >= settings.customers) {
+            this.endDay();
+            return;
+        }
+
+        // Generate customer and order
+        this.state.currentCustomer = this.generateCustomer();
+        this.state.currentOrder = this.generateOrder(this.state.currentCustomer);
+        this.state.dayCustomerIndex++;
+
+        // Update time
+        const hour = 9 + Math.floor(this.state.dayCustomerIndex * (8 / settings.customers));
+        const minute = Math.floor(Math.random() * 60);
+        this.elements.currentTime.textContent = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+
+        // Play customer arrive sound
+        soundManager.customerArrive();
+
+        // Render customer and order
+        this.renderCustomer();
+        this.renderOrder();
+
+        // Play paper slide sound
+        setTimeout(() => soundManager.paperSlide(), 300);
+
+        // Enable action buttons
+        this.toggleActionButtons(true);
+
+        // On mobile, switch to order panel
+        if (window.innerWidth < 768) {
+            setTimeout(() => {
+                this.setActivePanel('order');
+                this.setActiveMobileTab('order');
+            }, 500);
+        }
+    }
+
+    handleApprove() {
+        if (!this.state.currentOrder) return;
+
+        // Check if this approval is correct
+        const validation = this.validateOrder();
+
+        this.showStamp('approved');
+        soundManager.stampApprove();
+
+        setTimeout(() => {
+            if (validation.shouldApprove) {
+                // Correct approval
+                const earnings = this.calculateEarnings();
+                const tip = (Math.floor(Math.random() * 3) + 1) * 2000;
+
+                this.state.todayEarnings += earnings;
+                this.state.todayTips += tip;
+                this.state.money += earnings + tip;
+                this.state.customersApproved++;
+                this.state.customersServed++;
+
+                // Track caffeine
+                this.trackCaffeine();
+
+                // Play success sounds
+                soundManager.correct();
+                soundManager.money();
+
+                this.showResult(true, 'Pesanan diproses dengan benar!', earnings + tip);
+            } else {
+                // Wrong approval - should have rejected
+                this.state.violations++;
+                this.state.todayPenalties += 25000;
+                this.state.money = Math.max(0, this.state.money - 25000);
+                this.state.customersApproved++;
+                this.state.customersServed++;
+
+                // Play violation sound
+                soundManager.violation();
+
+                this.showResult(false, `Salah! Harusnya ditolak: ${validation.reason}`, -25000);
+            }
+
+            this.updateHUD();
+            this.checkGameOver();
+        }, 600);
+    }
+
+    showReasonSelector() {
+        if (!this.state.currentOrder) return;
+
+        // Build reason buttons based on active rules
+        const reasonsHtml = GAME_DATA.rejectionReasons.map(reason => `
+            <button class="reason-btn" data-reason="${reason.id}">${reason.text}</button>
+        `).join('');
+
+        this.elements.reasonButtons.innerHTML = reasonsHtml;
+        this.elements.reasonSelector.style.display = 'block';
+
+        // Bind reason buttons
+        this.elements.reasonButtons.querySelectorAll('.reason-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => this.handleReject(e.target.dataset.reason));
+        });
+    }
+
+    handleReject(reason) {
+        if (!this.state.currentOrder) return;
+
+        const validation = this.validateOrder();
+
+        this.elements.reasonSelector.style.display = 'none';
+        this.showStamp('rejected');
+        soundManager.stampReject();
+
+        setTimeout(() => {
+            if (!validation.shouldApprove && validation.reasonId === reason) {
+                // Correct rejection with correct reason
+                const tip = 10000;
+                this.state.todayEarnings += 10000;
+                this.state.todayTips += tip;
+                this.state.money += 10000 + tip;
+                this.state.customersRejected++;
+                this.state.customersServed++;
+
+                // Play success sounds
+                soundManager.correct();
+                soundManager.money();
+
+                this.showResult(true, 'Masalah teridentifikasi dengan benar!', 20000);
+            } else if (!validation.shouldApprove) {
+                // Correct rejection but wrong reason
+                this.state.todayEarnings += 5000;
+                this.state.money += 5000;
+                this.state.customersRejected++;
+                this.state.customersServed++;
+
+                // Play partial success sound
+                soundManager.correct();
+
+                this.showResult(true, `Ditolak benar, tapi alasannya: ${validation.reason}`, 5000);
+            } else {
+                // Wrong rejection - should have approved
+                this.state.violations++;
+                this.state.todayPenalties += 25000;
+                this.state.money = Math.max(0, this.state.money - 25000);
+                this.state.customersRejected++;
+                this.state.customersServed++;
+
+                // Play violation sound
+                soundManager.violation();
+
+                this.showResult(false, 'Salah! Pesanan ini valid.', -25000);
+            }
+
+            this.updateHUD();
+            this.checkGameOver();
+        }, 600);
+    }
+
+    showStamp(type) {
+        const stamp = type === 'approved' ? this.elements.stampApproved : this.elements.stampRejected;
+        stamp.classList.add('show');
+
+        // Vibrate on mobile if supported
+        if (navigator.vibrate) {
+            navigator.vibrate(50);
+        }
+
+        setTimeout(() => {
+            stamp.classList.remove('show');
+        }, 1000);
+    }
+
+    showResult(success, message, amount) {
+        this.elements.resultIcon.textContent = success ? '✓' : '✗';
+        this.elements.resultIcon.className = 'result-icon ' + (success ? 'success' : 'error');
+        this.elements.resultTitle.textContent = success ? 'BENAR!' : 'PELANGGARAN!';
+        this.elements.resultTitle.className = 'result-title ' + (success ? 'success' : 'error');
+        this.elements.resultMessage.textContent = message;
+        this.elements.resultEarnings.textContent = (amount >= 0 ? '+' : '') + formatRupiah(amount);
+        this.elements.resultEarnings.className = 'result-earnings ' + (amount >= 0 ? 'positive' : 'negative');
+
+        this.elements.resultPopup.classList.add('show');
+    }
+
+    hideResultPopup() {
+        this.elements.resultPopup.classList.remove('show');
+
+        const settings = this.getDaySettings();
+        if (this.state.dayCustomerIndex >= settings.customers) {
+            this.endDay();
+        } else {
+            this.setActivePanel('customer');
+            this.setActiveMobileTab('customer');
+            this.showEmptyCustomerArea();
+        }
+    }
+
+    endDay() {
+        // Calculate totals
+        const netTotal = this.state.todayEarnings + this.state.todayTips - this.state.todayPenalties;
+        const settings = this.getDaySettings();
+
+        // Update day end screen
+        this.elements.endDay.textContent = this.state.day;
+        this.elements.reportCustomers.textContent = this.state.customersServed;
+        this.elements.reportApproved.textContent = this.state.customersApproved;
+        this.elements.reportRejected.textContent = this.state.customersRejected;
+        this.elements.reportViolations.textContent = this.state.violations;
+
+        this.elements.financeEarnings.textContent = `+${formatRupiah(this.state.todayEarnings)}`;
+        this.elements.financeTips.textContent = `+${formatRupiah(this.state.todayTips)}`;
+        this.elements.financePenalties.textContent = `-${formatRupiah(this.state.todayPenalties)}`;
+        this.elements.financeTotal.textContent = formatRupiah(netTotal);
+        this.elements.financeTotal.className = netTotal >= 0 ? 'positive' : 'negative';
+
+        // Determine status
+        let statusClass, statusText;
+        if (this.state.todayEarnings >= settings.target && this.state.violations === 0) {
+            statusClass = 'success';
+            statusText = '⭐ PERFORMA LUAR BIASA!';
+        } else if (this.state.todayEarnings >= settings.target) {
+            statusClass = 'success';
+            statusText = '✓ TARGET TERCAPAI';
+        } else if (this.state.todayEarnings >= settings.target * 0.7) {
+            statusClass = 'warning';
+            statusText = '⚠ DI BAWAH TARGET';
+        } else {
+            statusClass = 'danger';
+            statusText = '✗ PERFORMA BURUK';
+        }
+
+        this.elements.dayStatus.className = 'status-badge ' + statusClass;
+        this.elements.dayStatus.textContent = statusText;
+
+        this.state.totalMoney += netTotal;
+
+        // Play day end sound
+        soundManager.dayEnd();
+
+        this.showScreen('dayend');
+    }
+
+    nextDay() {
+        // Reset for new day
+        this.state.day++;
+        this.state.violations = 0;
+        this.state.customersServed = 0;
+        this.state.customersApproved = 0;
+        this.state.customersRejected = 0;
+
+        this.showBriefing();
+    }
+
+    checkGameOver() {
+        const settings = this.getDaySettings();
+
+        if (this.state.violations >= settings.maxViolations) {
+            this.gameOver('Terlalu banyak pelanggaran! Hak ngopi kamu telah dicabut.');
+        }
+    }
+
+    gameOver(message) {
+        this.state.isGameOver = true;
+
+        this.elements.gameoverMessage.textContent = message;
+        this.elements.finalDays.textContent = this.state.day;
+        this.elements.finalMoney.textContent = formatRupiah(this.state.totalMoney);
+        this.elements.finalCustomers.textContent = this.state.customersServed;
+
+        // Play game over sound
+        soundManager.gameOver();
+
+        setTimeout(() => {
+            this.showScreen('gameover');
+        }, 500);
+    }
+
+    restart() {
+        // Reset all state
+        this.state = {
+            day: 1,
+            money: 0,
+            totalMoney: 0,
+            violations: 0,
+            customersServed: 0,
+            customersApproved: 0,
+            customersRejected: 0,
+            todayEarnings: 0,
+            todayTips: 0,
+            todayPenalties: 0,
+            currentCustomer: null,
+            currentOrder: null,
+            dayCustomerIndex: 0,
+            isGameOver: false,
+            activeRules: []
+        };
+
+        this.caffeineTracker.clear();
+        this.showScreen('intro');
+    }
+
+    // ========================================
+    // CUSTOMER & ORDER GENERATION
+    // ========================================
+
+    generateCustomer() {
+        const role = GAME_DATA.roles[Math.floor(Math.random() * GAME_DATA.roles.length)];
+        const firstName = GAME_DATA.firstNames[Math.floor(Math.random() * GAME_DATA.firstNames.length)];
+        const lastName = GAME_DATA.lastNames[Math.floor(Math.random() * GAME_DATA.lastNames.length)];
+
+        // Determine membership tier (weighted)
+        const tierRoll = Math.random();
+        let tier;
+        if (tierRoll < 0.5) {
+            tier = 'free';
+        } else if (tierRoll < 0.8) {
+            tier = 'pro';
+        } else {
+            tier = 'enterprise';
+        }
+
+        // Budget based on role
+        const [minBudget, maxBudget] = role.budgetRange;
+        const budget = Math.floor(Math.random() * (maxBudget - minBudget + 1)) + minBudget;
+
+        // Caffeine already consumed today
+        const customerId = `${firstName}_${lastName}`;
+        const previousCaffeine = this.caffeineTracker.get(customerId) || 0;
+
+        // Burnout status (more likely after day 3)
+        const burnoutChance = this.state.day >= 4 ? 0.15 : 0;
+        const isBurnout = Math.random() < burnoutChance;
+
+        return {
+            id: customerId,
+            name: `${firstName} ${lastName}`,
+            role: role,
+            tier: tier,
+            budget: budget,
+            caffeine: previousCaffeine,
+            isBurnout: isBurnout,
+            typoChance: role.typoChance
+        };
+    }
+
+    generateOrder(customer) {
+        const availableItems = GAME_DATA.menu.filter(item => {
+            const tierOrder = ['free', 'pro', 'enterprise'];
+            return tierOrder.indexOf(customer.tier) >= tierOrder.indexOf(item.minTier);
+        });
+
+        // Number of items (1-3)
+        const numItems = Math.min(1 + Math.floor(Math.random() * 3), this.state.day >= 7 ? 4 : 3);
+
+        let items = [];
+        let hasTypo = false;
+        let typoItemIndex = -1;
+
+        for (let i = 0; i < numItems; i++) {
+            const item = availableItems[Math.floor(Math.random() * availableItems.length)];
+            let itemName = item.name;
+            let itemId = item.id;
+            let isTypo = false;
+
+            // Introduce typo based on customer and day
+            if (this.state.day >= 5 && !hasTypo && Math.random() < customer.typoChance) {
+                const typos = GAME_DATA.typos[item.id];
+                if (typos && typos.length > 0) {
+                    itemName = typos[Math.floor(Math.random() * typos.length)];
+                    isTypo = true;
+                    hasTypo = true;
+                    typoItemIndex = i;
+                }
+            }
+
+            items.push({
+                ...item,
+                displayName: itemName,
+                isTypo: isTypo
+            });
+        }
+
+        // Generate promo code (sometimes)
+        let promoCode = null;
+        let promoValid = true;
+        if (Math.random() < 0.3 && this.state.day >= 3) {
+            const codes = Object.keys(GAME_DATA.promoCodes);
+            promoCode = codes[Math.floor(Math.random() * codes.length)];
+
+            const promo = GAME_DATA.promoCodes[promoCode];
+            const dayOfWeek = (this.state.day % 5) + 1; // 1-5
+
+            // Check validity
+            if (!promo.validDays.includes(dayOfWeek)) {
+                promoValid = false;
+            }
+        }
+
+        // Calculate totals
+        let subtotal = items.reduce((sum, item) => sum + item.price, 0);
+        let discount = 0;
+
+        // Tier discount
+        discount += subtotal * (GAME_DATA.tiers[customer.tier].discount / 100);
+
+        // Promo discount
+        if (promoCode && promoValid) {
+            const promo = GAME_DATA.promoCodes[promoCode];
+            if (subtotal >= promo.minOrder) {
+                discount += subtotal * (promo.discount / 100);
+            }
+        }
+
+        const total = Math.max(1000, Math.round((subtotal - discount) / 1000) * 1000);
+        const totalCaffeine = items.reduce((sum, item) => sum + item.caffeine, 0);
+
+        return {
+            items: items,
+            subtotal: subtotal,
+            discount: Math.round(discount / 1000) * 1000,
+            total: total,
+            promoCode: promoCode,
+            promoValid: promoValid,
+            caffeine: totalCaffeine,
+            hasTypo: hasTypo,
+            typoItemIndex: typoItemIndex,
+            orderNumber: `#${Date.now().toString(36).toUpperCase()}`
+        };
+    }
+
+    // ========================================
+    // VALIDATION
+    // ========================================
+
+    validateOrder() {
+        const customer = this.state.currentCustomer;
+        const order = this.state.currentOrder;
+        const day = this.state.day;
+
+        // Day 1+: Check budget
+        if (order.total > customer.budget) {
+            return { shouldApprove: false, reason: 'Budget tidak cukup', reasonId: 'insufficient_budget' };
+        }
+
+        // Day 1+: Check tier restrictions
+        for (const item of order.items) {
+            const tierOrder = ['free', 'pro', 'enterprise'];
+            if (tierOrder.indexOf(customer.tier) < tierOrder.indexOf(item.minTier)) {
+                return { shouldApprove: false, reason: 'Tier membership tidak valid untuk item ini', reasonId: 'invalid_tier' };
+            }
+        }
+
+        // Day 2+: Check caffeine limit
+        if (day >= 2) {
+            const maxCaffeine = GAME_DATA.tiers[customer.tier].maxCaffeine;
+            if (customer.caffeine + order.caffeine > maxCaffeine) {
+                return { shouldApprove: false, reason: 'Batas kafein terlampaui', reasonId: 'caffeine_limit' };
+            }
+        }
+
+        // Day 3+: Check promo code
+        if (day >= 3 && order.promoCode && !order.promoValid) {
+            return { shouldApprove: false, reason: 'Kode promo tidak valid', reasonId: 'invalid_promo' };
+        }
+
+        // Day 4+: Check burnout
+        if (day >= 4 && customer.isBurnout) {
+            return { shouldApprove: false, reason: 'Pelanggan burnout terdeteksi', reasonId: 'burnout' };
+        }
+
+        // Day 5+: Check typos
+        if (day >= 5 && order.hasTypo) {
+            return { shouldApprove: false, reason: 'Pesanan mengandung typo/bug', reasonId: 'typo_bug' };
+        }
+
+        // Day 7+: Check max items
+        if (day >= 7 && order.items.length > 3) {
+            return { shouldApprove: false, reason: 'Terlalu banyak item (maks 3)', reasonId: 'too_many_items' };
+        }
+
+        return { shouldApprove: true, reason: null, reasonId: null };
+    }
+
+    // ========================================
+    // RENDERING
+    // ========================================
+
+    renderCustomer() {
+        const customer = this.state.currentCustomer;
+        const tierInfo = GAME_DATA.tiers[customer.tier];
+
+        let badges = '';
+        if (customer.isBurnout) {
+            badges += `<div class="stat-badge danger">😴 Burnout</div>`;
+        }
+        if (customer.caffeine > 0) {
+            const maxCaffeine = tierInfo.maxCaffeine;
+            const caffeinePercent = (customer.caffeine / maxCaffeine) * 100;
+            const badgeClass = caffeinePercent >= 80 ? 'danger' : caffeinePercent >= 50 ? 'warning' : '';
+            badges += `<div class="stat-badge ${badgeClass}">☕ ${customer.caffeine}/${maxCaffeine}</div>`;
+        }
+
+        const dialogue = customer.isBurnout
+            ? GAME_DATA.dialogues.burnout[Math.floor(Math.random() * GAME_DATA.dialogues.burnout.length)]
+            : customer.caffeine >= GAME_DATA.tiers[customer.tier].maxCaffeine * 0.8
+                ? GAME_DATA.dialogues.highCaffeine[Math.floor(Math.random() * GAME_DATA.dialogues.highCaffeine.length)]
+                : GAME_DATA.dialogues.normal[Math.floor(Math.random() * GAME_DATA.dialogues.normal.length)];
+
+        this.elements.customerArea.innerHTML = `
+            <div class="customer-card">
+                <div class="customer-avatar">${customer.role.emoji}</div>
+                <div class="customer-name">${customer.name}</div>
+                <div class="customer-role" style="color: ${tierInfo.color}">${customer.role.name} • ${tierInfo.name}</div>
+                <div class="customer-stats">
+                    <div class="stat-badge">💰 ${formatRupiah(customer.budget)}</div>
+                    ${badges}
+                </div>
+                <div class="customer-dialogue">${dialogue}</div>
+            </div>
+        `;
+    }
+
+    renderOrder() {
+        const order = this.state.currentOrder;
+        const customer = this.state.currentCustomer;
+
+        // Build code-style order
+        const itemsCode = order.items.map((item, i) => {
+            const nameClass = item.isTypo ? 'error' : 'string';
+            return `  <span class="variable">item${i + 1}</span>: <span class="${nameClass}">"${item.displayName}"</span>, <span class="comment">// ${formatRupiah(item.price)}</span>`;
+        }).join('\n');
+
+        const promoSection = order.promoCode ? `
+            <div class="promo-code">
+                PROMO: <strong>${order.promoCode}</strong>
+            </div>
+        ` : '';
+
+        this.elements.orderArea.innerHTML = `
+            <div class="order-document">
+                <div class="order-header">
+                    <div class="order-logo">☕ AZERA CODE CAFÉ</div>
+                    <div class="order-title">SLIP PESANAN</div>
+                    <div class="order-number">${order.orderNumber}</div>
+                </div>
+                
+                <div class="order-code">
+<span class="keyword">const</span> <span class="function">pesanan</span> = {
+${itemsCode}
+};
+<span class="comment">// Pelanggan: ${customer.name}</span>
+<span class="comment">// Tier: ${customer.tier}</span>
+                </div>
+
+                <div class="order-details">
+                    <div class="order-row">
+                        <span class="order-label">Subtotal</span>
+                        <span class="order-value">${formatRupiah(order.subtotal)}</span>
+                    </div>
+                    <div class="order-row">
+                        <span class="order-label">Diskon</span>
+                        <span class="order-value">-${formatRupiah(order.discount)}</span>
+                    </div>
+                    <div class="order-row">
+                        <span class="order-label">Kafein</span>
+                        <span class="order-value">${order.caffeine} unit</span>
+                    </div>
+                </div>
+
+                <div class="order-total">
+                    <span>TOTAL</span>
+                    <span>${formatRupiah(order.total)}</span>
+                </div>
+
+                ${promoSection}
+            </div>
+        `;
+    }
+
+    updateRulebook(tab) {
+        let content = '';
+
+        if (tab === 'rules') {
+            content = `
+                <div class="rulebook-section">
+                    <div class="rulebook-section-title">📋 Aturan Aktif (Hari ${this.state.day})</div>
+                    ${this.state.activeRules.map(rule => `
+                        <div class="rulebook-item">${rule.text}</div>
+                    `).join('')}
+                </div>
+            `;
+        } else if (tab === 'menu') {
+            content = `
+                <div class="rulebook-section">
+                    <div class="rulebook-section-title">☕ Menu Kopi</div>
+                    ${GAME_DATA.menu.map(item => `
+                        <div class="menu-item">
+                            <span class="menu-item-name">${item.name}</span>
+                            <span class="menu-item-price">${formatRupiah(item.price)}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        } else if (tab === 'members') {
+            content = `
+                <div class="rulebook-section">
+                    <div class="rulebook-section-title">🎫 Tier Membership</div>
+                    ${Object.entries(GAME_DATA.tiers).map(([key, tier]) => `
+                        <div class="member-tier" style="border-left-color: ${tier.color}">
+                            <div class="member-tier-name">${tier.name}</div>
+                            <div class="member-tier-perks">
+                                Diskon: ${tier.discount}% • Maks Kafein: ${tier.maxCaffeine}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        this.elements.rulebookContent.innerHTML = content;
+    }
+
+    showInspection() {
+        const order = this.state.currentOrder;
+        const customer = this.state.currentCustomer;
+
+        // Document side
+        this.elements.inspectionDocument.innerHTML = `
+            <h3 style="color: var(--accent-primary); margin-bottom: var(--space-md); font-size: 0.9rem;">📋 Dokumen Pesanan</h3>
+            <div style="margin-bottom: var(--space-sm); font-size: 0.85rem;">
+                <strong>Pelanggan:</strong> ${customer.name}
+            </div>
+            <div style="margin-bottom: var(--space-sm); font-size: 0.85rem;">
+                <strong>Role:</strong> ${customer.role.name}
+            </div>
+            <div style="margin-bottom: var(--space-sm); font-size: 0.85rem;">
+                <strong>Tier:</strong> ${customer.tier}
+            </div>
+            <div style="margin-bottom: var(--space-sm); font-size: 0.85rem;">
+                <strong>Budget:</strong> ${formatRupiah(customer.budget)}
+            </div>
+            <div style="margin-bottom: var(--space-md); font-size: 0.85rem;">
+                <strong>Kafein Saat Ini:</strong> ${customer.caffeine}
+            </div>
+            <hr style="border-color: var(--bg-card); margin: var(--space-md) 0;">
+            <div style="margin-bottom: var(--space-sm); font-size: 0.85rem;">
+                <strong>Item Pesanan:</strong>
+            </div>
+            ${order.items.map(item => `
+                <div style="padding: var(--space-xs) 0; font-size: 0.8rem; ${item.isTypo ? 'color: var(--accent-error);' : ''}">
+                    • ${item.displayName} - ${formatRupiah(item.price)}
+                </div>
+            `).join('')}
+            <div style="margin-top: var(--space-md); font-size: 0.85rem;">
+                <strong>Total:</strong> ${formatRupiah(order.total)}
+            </div>
+            ${order.promoCode ? `<div style="font-size: 0.85rem;"><strong>Promo:</strong> ${order.promoCode}</div>` : ''}
+        `;
+
+        // Reference side
+        const tierInfo = GAME_DATA.tiers[customer.tier];
+        this.elements.inspectionReference.innerHTML = `
+            <h3 style="color: var(--accent-primary); margin-bottom: var(--space-md); font-size: 0.9rem;">📖 Referensi</h3>
+            <div style="margin-bottom: var(--space-md); font-size: 0.85rem;">
+                <strong>Batas ${tierInfo.name}:</strong>
+                <div style="font-size: 0.8rem;">• Maks Kafein: ${tierInfo.maxCaffeine} unit</div>
+                <div style="font-size: 0.8rem;">• Diskon: ${tierInfo.discount}%</div>
+            </div>
+            <div style="margin-bottom: var(--space-md); font-size: 0.85rem;">
+                <strong>Menu Valid:</strong>
+                ${GAME_DATA.menu.slice(0, 6).map(item => `
+                    <div style="font-size: 0.8rem;">• ${item.name}</div>
+                `).join('')}
+            </div>
+            ${order.promoCode ? `
+                <div style="font-size: 0.85rem;">
+                    <strong>Info Kode Promo:</strong>
+                    <div style="font-size: 0.8rem;">Kode: ${order.promoCode}</div>
+                    <div style="font-size: 0.8rem;">Status: ${order.promoValid ? '✓ Valid' : '✗ Tidak Valid'}</div>
+                </div>
+            ` : ''}
+        `;
+
+        this.elements.inspectionModal.classList.add('show');
+    }
+
+    hideInspection() {
+        this.elements.inspectionModal.classList.remove('show');
+    }
+
+    // ========================================
+    // HELPERS
+    // ========================================
+
+    updateHUD() {
+        const settings = this.getDaySettings();
+
+        this.elements.currentDay.textContent = this.state.day;
+        this.elements.currentMoney.textContent = formatRupiah(this.state.money);
+        this.elements.violations.textContent = `${this.state.violations}/${settings.maxViolations}`;
+    }
+
+    toggleActionButtons(enabled) {
+        this.elements.approveBtn.disabled = !enabled;
+        this.elements.rejectBtn.disabled = !enabled;
+        this.elements.inspectBtn.disabled = !enabled;
+        this.elements.reasonSelector.style.display = 'none';
+    }
+
+    getDaySettings() {
+        const day = this.state.day;
+        if (day <= GAME_DATA.daySettings.length) {
+            return GAME_DATA.daySettings[day - 1];
+        }
+        // Scale for later days
+        const lastSettings = GAME_DATA.daySettings[GAME_DATA.daySettings.length - 1];
+        return {
+            target: lastSettings.target + (day - 7) * 150000,
+            customers: Math.min(lastSettings.customers + (day - 7) * 2, 30),
+            maxViolations: 1
+        };
+    }
+
+    calculateEarnings() {
+        return this.state.currentOrder.total;
+    }
+
+    trackCaffeine() {
+        const customer = this.state.currentCustomer;
+        const order = this.state.currentOrder;
+
+        const currentCaffeine = this.caffeineTracker.get(customer.id) || 0;
+        this.caffeineTracker.set(customer.id, currentCaffeine + order.caffeine);
+    }
+
+    getDateString() {
+        const baseDate = new Date(2026, 0, 10); // 10 Januari 2026
+        const currentDate = new Date(baseDate);
+        currentDate.setDate(baseDate.getDate() + this.state.day - 1);
+
+        return `${GAME_DATA.dayNames[currentDate.getDay()]}, ${currentDate.getDate()} ${GAME_DATA.monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
+    }
+}
+
+// Initialize game when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    window.game = new AzeraGame();
+});
+
+    </script>
+</body>
+</html>

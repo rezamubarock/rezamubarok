@@ -1,0 +1,31 @@
+{
+    "name": "Private",
+    "icon": "♦️",
+    "items": [
+        {
+            "title": "VideoClip Engine",
+            "link": "https://gemini.google.com/share/9a72940161da",
+            "icon": "👨‍💻"
+        },
+        {
+            "title": "Secret Project 2",
+            "link": "#",
+            "icon": "👨‍💻"
+        },
+        {
+            "title": "Admin Notes",
+            "link": "#",
+            "icon": "👨‍💻"
+        },
+        {
+            "title": "Admin Notes",
+            "link": "#",
+            "icon": "👨‍💻"
+        },
+        {
+            "title": "Admin Notes",
+            "link": "#",
+            "icon": "👨‍💻"
+        }
+    ]
+}

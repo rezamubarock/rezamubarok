@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark" data-time="night">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <meta name="description" content="Reza Mubarok - Personal Links & Portfolio">
+  <title>Reza Mubarok</title>
+
+  <!-- iOS PWA Meta Tags -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Reza">
+  <meta name="theme-color" content="#1c1c1e">
+
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
+  <link rel="apple-touch-icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
+  <script src="auth.js"></script>
+</head>
+
+<body>
+
+  <!-- iOS Status Bar (Mobile Only) -->
+  <div class="ios-status-bar" id="ios-status-bar">
+    <div class="left">📶 5G</div>
+    <div class="time" id="ios-time">21:45</div>
+    <div class="right">🔋 100%</div>
+  </div>
+
+  <!-- Login Screen -->
+  <div class="login-screen" id="login-screen">
+    <div class="login-box">
+      <div class="login-avatar">🔒</div>
+      <div class="login-name">Reza Mubarok</div>
+      <div class="login-input-wrapper">
+        <input type="password" class="login-input" id="password-input" placeholder="Enter Password" autocomplete="off">
+        <span class="password-toggle" id="password-toggle">👁️</span>
+      </div>
+      <button class="login-btn" id="login-btn">Unlock</button>
+      <div class="login-hint">Tap Unlock or press Enter</div>
+    </div>
+    <div class="login-time" id="login-time"></div>
+    <div class="login-date" id="login-date"></div>
+  </div>
+
+  <!-- Menu Bar -->
+  <nav class="menubar">
+    <div class="menubar-left" id="menubar-container">
+      <!-- Menubar items will be loaded from settings.json -->
+    </div>
+    <div class="menubar-right">
+      <span id="current-time" class="menubar-item"></span>
+      <span class="theme-toggle" id="theme-toggle" title="Toggle Theme">🌙</span>
+    </div>
+  </nav>
+
+  <!-- Desktop Area -->
+  <main class="desktop">
+    <div class="desktop-greeting fade-in">
+      <h1>Reza Mubarok</h1>
+      <p class="subtitle">Developer • Creator • Marketer</p>
+      <p class="dua floating">ALLAHUMMA SUGEH</p>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="search-container fade-in">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" class="search-input" id="search-input" placeholder="Search..." autocomplete="off">
+        <span class="search-clear" id="search-clear" style="display: none;">✕</span>
+      </div>
+      <div class="search-results" id="search-results"></div>
+    </div>
+
+    <div class="desktop-icons fade-in" id="desktop-icons">
+      <!-- Icons will be loaded from JSON -->
+    </div>
+  </main>
+
+  <!-- Folder Windows Container -->
+  <div id="folder-windows"></div>
+
+  <!-- About Modal -->
+  <div class="modal-overlay" id="about-modal">
+    <div class="modal" id="about-modal-content">
+      <!-- Loaded from settings.json -->
+    </div>
+  </div>
+
+  <!-- Credits Modal -->
+  <div class="modal-overlay" id="credits-modal">
+    <div class="modal" id="credits-modal-content">
+      <!-- Loaded from settings.json -->
+    </div>
+  </div>
+
+  <!-- Private Folder Password Modal -->
+  <div class="modal-overlay" id="private-modal">
+    <div class="modal">
+      <h2>🔐 Private Folder</h2>
+      <p>This folder is password protected.</p>
+      <div class="login-input-wrapper" style="margin: 20px 0;">
+        <input type="password" class="login-input" id="private-password" placeholder="Enter Password" autocomplete="off"
+          style="background: var(--bg-secondary); color: var(--text-primary);">
+      </div>
+      <p id="private-error" style="color: #ff5f57; font-size: 12px; display: none;">Wrong password!</p>
+      <div style="display: flex; gap: 10px; justify-content: center;">
+        <button class="modal-btn" style="background: var(--text-secondary);"
+          onclick="closeModal('private-modal')">Cancel</button>
+        <button class="modal-btn" onclick="submitPrivatePassword()">Unlock</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Private Folder Window -->
+  <div class="folder-window" id="folder-Private">
+    <div class="folder-header">
+      <div class="folder-controls">
+        <div class="folder-control close" onclick="closeFolder('Private')"></div>
+        <div class="folder-control minimize"></div>
+        <div class="folder-control maximize"></div>
+      </div>
+      <span class="folder-title">♦️ Private</span>
+    </div>
+    <div class="folder-content" id="private-folder-content">
+      <!-- Will be loaded from private-links.json -->
+    </div>
+  </div>
+
+
+  <!-- Dock -->
+  <div class="dock-container">
+    <div class="dock" id="dock">
+      <!-- Dock items will be loaded from JSON -->
+    </div>
+  </div>
+
+  <script>
+    // ========================================
+    // Haptic Feedback (Mobile Vibration)
+    // ========================================
+    function hapticFeedback(type = 'light') {
+      // Check if vibration is supported
+      if (!navigator.vibrate) return;
+
+      try {
+        switch (type) {
+          case 'light':
+            navigator.vibrate(10); // 10ms - subtle tap
+            break;
+          case 'medium':
+            navigator.vibrate(25); // 25ms - button press
+            break;
+          case 'heavy':
+            navigator.vibrate(50); // 50ms - important action
+            break;
+          case 'error':
+            navigator.vibrate([50, 50, 50]); // Pattern for error
+            break;
+          case 'success':
+            navigator.vibrate([10, 50, 10]); // Pattern for success
+            break;
+          default:
+            navigator.vibrate(10);
+        }
+      } catch (e) {
+        // Silently fail if vibration not allowed
+      }
+    }
+
+    // ========================================
+    // Tap Sound Effect
+    // ========================================
+    let audioContext = null;
+
+    function playTapSound() {
+      // Play haptic feedback on mobile
+      hapticFeedback('light');
+
+      try {
+        // Create audio context on first use (required for mobile)
+        if (!audioContext) {
+          audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        }
+
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+
+        // Short, subtle click sound
+        oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+        oscillator.frequency.exponentialRampToValueAtTime(300, audioContext.currentTime + 0.05);
+
+        gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.05);
+
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.05);
+      } catch (e) {
+        // Silently fail if audio not supported
+      }
+    }
+
+    // Medium haptic for important actions
+    function playMediumTap() {
+      hapticFeedback('medium');
+      playTapSound();
+    }
+
+    // Error haptic
+    function playErrorFeedback() {
+      hapticFeedback('error');
+    }
+
+    // Success haptic  
+    function playSuccessFeedback() {
+      hapticFeedback('success');
+    }
+
+    // Add tap sound to clickable elements
+    function addTapSounds() {
+      const clickables = document.querySelectorAll(
+        '.desktop-icon, .dock-item, .folder-item, .dropdown-item, .modal-btn, ' +
+        '.login-btn, .theme-toggle, .password-toggle, .search-clear, .folder-control.close'
+      );
+
+      clickables.forEach(el => {
+        el.addEventListener('click', playTapSound);
+      });
+    }
+
+    // Initialize tap sounds after DOM loaded
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(addTapSounds, 1000); // Wait for dynamic elements
+    });
+
+    // ========================================
+    // Authentication
+    // ========================================
+    const loginScreen = document.getElementById('login-screen');
+    const passwordInput = document.getElementById('password-input');
+    const loginBtn = document.getElementById('login-btn');
+    const passwordToggle = document.getElementById('password-toggle');
+
+    // Check if already authenticated
+    if (checkAuth()) {
+      loginScreen.classList.add('hidden');
+    }
+
+    // Login function
+    function attemptLogin() {
+      if (validateAccess(passwordInput.value)) {
+        playSuccessFeedback();
+        setAuth();
+        loginScreen.classList.add('hidden');
+      } else {
+        playErrorFeedback();
+        passwordInput.classList.add('error');
+        passwordInput.value = '';
+        setTimeout(() => passwordInput.classList.remove('error'), 500);
+      }
+    }
+
+    // Enter key handler
+    passwordInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        attemptLogin();
+      }
+    });
+
+    // Also listen for keydown for mobile compatibility
+    passwordInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.keyCode === 13) {
+        e.preventDefault();
+        attemptLogin();
+      }
+    });
+
+    // Button click handler
+    loginBtn.addEventListener('click', attemptLogin);
+
+    // Password toggle
+    passwordToggle.addEventListener('click', () => {
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        passwordToggle.textContent = '🙈';
+      } else {
+        passwordInput.type = 'password';
+        passwordToggle.textContent = '👁️';
+      }
+    });
+
+    function lockScreen() {
+      clearAuth();
+      loginScreen.classList.remove('hidden');
+      passwordInput.value = '';
+      passwordInput.type = 'password';
+      passwordToggle.textContent = '👁️';
+      passwordInput.focus();
+      closeAllDropdowns();
+    }
+
+    // ========================================
+    // Time-based Theme
+    // ========================================
+    function updateTimeBasedTheme() {
+      const hour = new Date().getHours();
+      const html = document.documentElement;
+      let timeOfDay, theme;
+
+      if (hour >= 5 && hour < 7) {
+        timeOfDay = 'dawn';
+        theme = 'light';
+      } else if (hour >= 7 && hour < 12) {
+        timeOfDay = 'morning';
+        theme = 'light';
+      } else if (hour >= 12 && hour < 16) {
+        timeOfDay = 'afternoon';
+        theme = 'light';
+      } else if (hour >= 16 && hour < 18) {
+        timeOfDay = 'sunset';
+        theme = 'light';
+      } else if (hour >= 18 && hour < 21) {
+        timeOfDay = 'evening';
+        theme = 'dark';
+      } else {
+        timeOfDay = 'night';
+        theme = 'dark';
+      }
+
+      // Only auto-set if user hasn't manually toggled
+      if (!localStorage.getItem('manualTheme')) {
+        html.setAttribute('data-theme', theme);
+        document.getElementById('theme-toggle').textContent = theme === 'dark' ? '🌙' : '☀️';
+      }
+
+      html.setAttribute('data-time', timeOfDay);
+    }
+
+    updateTimeBasedTheme();
+    setInterval(updateTimeBasedTheme, 60000); // Update every minute
+
+    // ========================================
+    // Theme Toggle (Manual Override)
+    // ========================================
+    const themeToggle = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+
+    // Load saved manual theme if exists
+    const savedTheme = localStorage.getItem('manualTheme');
+    if (savedTheme) {
+      html.setAttribute('data-theme', savedTheme);
+      themeToggle.textContent = savedTheme === 'dark' ? '🌙' : '☀️';
+    }
+
+    themeToggle.addEventListener('click', () => {
+      const currentTheme = html.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', newTheme);
+      themeToggle.textContent = newTheme === 'dark' ? '🌙' : '☀️';
+      localStorage.setItem('manualTheme', newTheme);
+    });
+
+    // Double click to reset to auto
+    themeToggle.addEventListener('dblclick', () => {
+      localStorage.removeItem('manualTheme');
+      updateTimeBasedTheme();
+    });
+
+    // ========================================
+    // Clock
+    // ========================================
+    function updateClock() {
+      const now = new Date();
+
+      // Menubar clock
+      const menuOptions = {
+        weekday: 'short',
+        day: 'numeric',
+        month: 'short',
+        hour: '2-digit',
+        minute: '2-digit'
+      };
+      document.getElementById('current-time').textContent =
+        now.toLocaleDateString('id-ID', menuOptions);
+
+      // Login screen clock
+      const loginTime = document.getElementById('login-time');
+      const loginDate = document.getElementById('login-date');
+      if (loginTime) {
+        loginTime.textContent = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+      }
+      if (loginDate) {
+        loginDate.textContent = now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long' });
+      }
+
+      // iOS Status Bar clock
+      const iosTime = document.getElementById('ios-time');
+      if (iosTime) {
+        iosTime.textContent = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+      }
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    // Hide iOS status bar on desktop
+    function checkMobile() {
+      const statusBar = document.getElementById('ios-status-bar');
+      if (statusBar) {
+        statusBar.style.display = window.innerWidth <= 480 ? 'flex' : 'none';
+      }
+    }
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
+    // ========================================
+    // Settings & Dynamic Menu
+    // ========================================
+    async function loadSettings() {
+      try {
+        const response = await fetch('settings.json');
+        const settings = await response.json();
+
+        // Site Info
+        document.title = settings.siteTitle;
+
+        // Render Menubar
+        renderMenubar(settings.menubar);
+
+        // Render Modals
+        renderAboutModal(settings.aboutModal);
+        renderCreditsModal(settings.creditsModal);
+
+        // Init Dropdowns
+        initializeDropdowns();
+
+        // Re-attach sounds
+        setTimeout(addTapSounds, 500);
+
+      } catch (e) {
+        console.error('Error loading settings:', e);
+      }
+    }
+
+    function renderMenubar(menuData) {
+      const container = document.getElementById('menubar-container');
+      container.innerHTML = '';
+
+      // Apple Menu
+      container.innerHTML += createDropdown('apple-dropdown', menuData.apple.icon, 'logo menubar-item', menuData.apple.items);
+      // Profile Menu
+      container.innerHTML += createDropdown('name-dropdown', menuData.profile.title, 'menubar-item', menuData.profile.items);
+
+      // Links Menu (placeholder)
+      container.innerHTML += `
+      <div class="dropdown" id="links-dropdown">
+        <span class="menubar-item">Links</span>
+        <div class="dropdown-menu" id="links-menu"></div>
+      </div>`;
+
+      // About Menu
+      container.innerHTML += createDropdown('about-dropdown', menuData.about.title, 'menubar-item', menuData.about.items);
+    }
+
+    function createDropdown(id, triggerContent, triggerClass, items) {
+      const itemsHtml = items.map(item => {
+        if (item.divider) return '<div class="dropdown-divider"></div>';
+
+        let actionAttr = '';
+        if (item.action === 'showAbout') actionAttr = 'onclick="showAbout()"';
+        else if (item.action === 'showCredits') actionAttr = 'onclick="showCredits()"';
+        else if (item.action === 'refresh') actionAttr = 'onclick="window.location.reload()"';
+        else if (item.action === 'lockScreen') actionAttr = 'onclick="lockScreen()"';
+        else if (item.action === 'email') actionAttr = "onclick=\"window.open('mailto:admin@rezamubarok.com', '_blank')\"";
+
+        return `
+          <div class="dropdown-item" ${actionAttr}>
+            <span class="emoji">${item.icon}</span> ${item.title}
+          </div>
+        `;
+      }).join('');
+
+      return `
+        <div class="dropdown" id="${id}">
+          <span class="${triggerClass}">${triggerContent}</span>
+          <div class="dropdown-menu">
+            ${itemsHtml}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderAboutModal(data) {
+      const modal = document.getElementById('about-modal-content');
+      modal.innerHTML = `
+        <h2>${data.title}</h2>
+        <p>${data.description}</p>
+        <p style="font-size: 12px; color: var(--text-secondary);">${data.footer}</p>
+        <button class="modal-btn" onclick="closeModal('about-modal')">Close</button>
+      `;
+    }
+
+    function renderCreditsModal(data) {
+      const modal = document.getElementById('credits-modal-content');
+      const lines = data.lines.map(line => `<p>${line}</p>`).join('');
+      modal.innerHTML = `
+        <h2>${data.title}</h2>
+        ${lines}
+        <p style="font-size: 12px;">${data.copyright}</p>
+        <button class="modal-btn" onclick="closeModal('credits-modal')">Close</button>
+      `;
+    }
+
+    function initializeDropdowns() {
+      const dropdowns = document.querySelectorAll('.dropdown');
+      dropdowns.forEach(dropdown => {
+        const trigger = dropdown.querySelector('.menubar-item, .logo');
+        if (trigger) {
+          trigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeAllDropdowns();
+            dropdown.classList.add('active');
+          });
+        }
+      });
+    }
+
+    function closeAllDropdowns() {
+      document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('active'));
+    }
+
+    document.addEventListener('click', closeAllDropdowns);
+
+    // ========================================
+    // Modals
+    // ========================================
+    function showAbout() {
+      document.getElementById('about-modal').classList.add('active');
+      closeAllDropdowns();
+    }
+
+    function showCredits() {
+      document.getElementById('credits-modal').classList.add('active');
+      closeAllDropdowns();
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('active');
+    }
+
+    // Close modal on overlay click
+    document.querySelectorAll('.modal-overlay').forEach(overlay => {
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+          overlay.classList.remove('active');
+        }
+      });
+    });
+
+    // ========================================
+    // Load Links from JSON
+    // ========================================
+    let linksData = null;
+
+    async function loadLinks() {
+      try {
+        const response = await fetch('links.json');
+        linksData = await response.json();
+        renderDesktopIcons();
+        renderDock();
+        createFolderWindows();
+        populateLinksMenu();
+        // Add tap sounds to new elements
+        setTimeout(addTapSounds, 100);
+      } catch (error) {
+        console.error('Error loading links:', error);
+      }
+    }
+
+    // Populate Links dropdown in menubar
+    function populateLinksMenu() {
+      const menu = document.getElementById('links-menu');
+      menu.innerHTML = '';
+
+      linksData.categories.forEach((category, idx) => {
+        const item = document.createElement('div');
+        item.className = 'dropdown-item';
+        item.innerHTML = `<span class="emoji">${category.icon}</span> ${category.name}`;
+        item.onclick = () => {
+          openFolder(category.name);
+          closeAllDropdowns();
+        };
+        menu.appendChild(item);
+
+        if (idx < linksData.categories.length - 1) {
+          const divider = document.createElement('div');
+          divider.className = 'dropdown-divider';
+          menu.appendChild(divider);
+        }
+      });
+    }
+
+    // ========================================
+    // Render Desktop Icons (Categories as Folders)
+    // ========================================
+    function renderDesktopIcons() {
+      const container = document.getElementById('desktop-icons');
+      container.innerHTML = '';
+
+      linksData.categories.forEach((category, index) => {
+        const icon = document.createElement('div');
+        icon.className = 'desktop-icon';
+        icon.style.animationDelay = `${index * 0.1}s`;
+        icon.innerHTML = `
+          <span class="icon">${category.icon}</span>
+          <span class="label">${category.name}</span>
+        `;
+        icon.addEventListener('click', () => openFolder(category.name));
+        container.appendChild(icon);
+      });
+
+      // Add Private folder icon
+      const privateIcon = document.createElement('div');
+      privateIcon.className = 'desktop-icon';
+      privateIcon.style.animationDelay = `${linksData.categories.length * 0.1}s`;
+      privateIcon.innerHTML = `
+        <span class="icon">♦️</span>
+        <span class="label">Private</span>
+      `;
+      privateIcon.addEventListener('click', () => openPrivateFolder());
+      container.appendChild(privateIcon);
+    }
+
+    // ========================================
+    // Render Dock
+    // ========================================
+    function renderDock() {
+      const dock = document.getElementById('dock');
+      dock.innerHTML = '';
+
+      linksData.dock.forEach((item, index) => {
+        const dockItem = document.createElement('div');
+        dockItem.className = 'dock-item';
+        dockItem.innerHTML = `
+          <span class="icon">${item.icon}</span>
+          <span class="tooltip">${item.title}</span>
+        `;
+
+        if (item.link.startsWith('#folder-')) {
+          const folderName = item.link.replace('#folder-', '');
+          dockItem.addEventListener('click', () => openFolder(folderName));
+        } else if (item.link !== '#') {
+          dockItem.addEventListener('click', () => window.open(item.link, '_blank'));
+        }
+
+        dock.appendChild(dockItem);
+
+        // Add divider after first 2 items
+        if (index === 1) {
+          const divider = document.createElement('div');
+          divider.className = 'dock-divider';
+          dock.appendChild(divider);
+        }
+      });
+    }
+
+    // ========================================
+    // Create Folder Windows
+    // ========================================
+    function createFolderWindows() {
+      const container = document.getElementById('folder-windows');
+      container.innerHTML = '';
+
+      linksData.categories.forEach(category => {
+        const folder = document.createElement('div');
+        folder.className = 'folder-window';
+        folder.id = `folder-${category.name}`;
+
+        let itemsHTML = category.items.map(item => `
+          <a href="${item.link}" target="_blank" class="folder-item">
+            <span class="icon">${item.icon}</span>
+            <span class="label">${item.title}</span>
+          </a>
+        `).join('');
+
+        folder.innerHTML = `
+          <div class="folder-header">
+            <div class="folder-controls">
+              <div class="folder-control close" onclick="closeFolder('${category.name}')"></div>
+              <div class="folder-control minimize"></div>
+              <div class="folder-control maximize"></div>
+            </div>
+            <span class="folder-title">${category.icon} ${category.name}</span>
+          </div>
+          <div class="folder-content">
+            ${itemsHTML}
+          </div>
+        `;
+
+        container.appendChild(folder);
+      });
+    }
+
+    // ========================================
+    // Folder Controls
+    // ========================================
+    function openFolder(name) {
+      // Close all folders first
+      document.querySelectorAll('.folder-window').forEach(f => f.classList.remove('active'));
+      // Open target folder
+      const folder = document.getElementById(`folder-${name}`);
+      if (folder) {
+        folder.classList.add('active');
+      }
+    }
+
+    function closeFolder(name) {
+      const folder = document.getElementById(`folder-${name}`);
+      if (folder) {
+        folder.classList.remove('active');
+      }
+    }
+
+    // Close folder when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.folder-window') &&
+        !e.target.closest('.desktop-icon') &&
+        !e.target.closest('.dock-item') &&
+        !e.target.closest('.dropdown')) {
+        document.querySelectorAll('.folder-window').forEach(f => f.classList.remove('active'));
+      }
+    });
+
+    // ========================================
+    // Initialize
+    // ========================================
+    (async function init() {
+      await loadSettings();
+      await loadLinks();
+
+      // Focus password on load if not authenticated
+      if (!checkAuth()) {
+        setTimeout(() => passwordInput.focus(), 500);
+      }
+    })();
+
+    // ========================================
+    // Private Folder Functions
+    // ========================================
+    let privateLinksData = null;
+
+    async function loadPrivateLinks() {
+      if (privateLinksData) return privateLinksData;
+      try {
+        const response = await fetch('private-links.json');
+        privateLinksData = await response.json();
+        return privateLinksData;
+      } catch (error) {
+        console.error('Error loading private links:', error);
+        return null;
+      }
+    }
+
+    function openPrivateFolder() {
+      if (checkPrivateAuth()) {
+        // Already authenticated, show folder directly
+        showPrivateFolderContent();
+      } else {
+        // Show password modal
+        document.getElementById('private-modal').classList.add('active');
+        document.getElementById('private-password').focus();
+        document.getElementById('private-error').style.display = 'none';
+      }
+    }
+
+    function submitPrivatePassword() {
+      const input = document.getElementById('private-password');
+      const error = document.getElementById('private-error');
+
+      if (validatePrivate(input.value)) {
+        playSuccessFeedback();
+        setPrivateAuth();
+        closeModal('private-modal');
+        input.value = '';
+        error.style.display = 'none';
+        showPrivateFolderContent();
+      } else {
+        playErrorFeedback();
+        error.style.display = 'block';
+        input.classList.add('error');
+        input.value = '';
+        setTimeout(() => input.classList.remove('error'), 500);
+      }
+    }
+
+    async function showPrivateFolderContent() {
+      const data = await loadPrivateLinks();
+      if (!data) return;
+
+      const container = document.getElementById('private-folder-content');
+      container.innerHTML = data.items.map(item => `
+        <a href="${item.link}" target="_blank" class="folder-item">
+          <span class="icon">${item.icon}</span>
+          <span class="label">${item.title}</span>
+        </a>
+      `).join('');
+
+      // Close other folders and open private
+      document.querySelectorAll('.folder-window').forEach(f => f.classList.remove('active'));
+      document.getElementById('folder-Private').classList.add('active');
+    }
+
+    // Handle Enter key for private password
+    document.getElementById('private-password').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        submitPrivatePassword();
+      }
+    });
+
+    // ========================================
+    // Search Functionality
+    // ========================================
+    const searchInput = document.getElementById('search-input');
+    const searchResults = document.getElementById('search-results');
+    const searchClear = document.getElementById('search-clear');
+
+    function getAllLinks() {
+      if (!linksData) return [];
+      const allLinks = [];
+
+      linksData.categories.forEach(category => {
+        category.items.forEach(item => {
+          allLinks.push({
+            ...item,
+            category: category.name,
+            categoryIcon: category.icon
+          });
+        });
+      });
+
+      return allLinks;
+    }
+
+    function searchLinks(query) {
+      const allLinks = getAllLinks();
+      const q = query.toLowerCase().trim();
+
+      if (!q) return [];
+
+      return allLinks.filter(link =>
+        link.title.toLowerCase().includes(q) ||
+        link.category.toLowerCase().includes(q)
+      );
+    }
+
+    function renderSearchResults(results) {
+      if (results.length === 0) {
+        searchResults.innerHTML = '<div class="search-no-results">No results found</div>';
+      } else {
+        searchResults.innerHTML = results.map(item => `
+          <a href="${item.link}" target="_blank" class="search-result-item">
+            <span class="icon">${item.icon}</span>
+            <div class="info">
+              <div class="title">${item.title}</div>
+              <div class="category">${item.categoryIcon} ${item.category}</div>
+            </div>
+          </a>
+        `).join('');
+      }
+      searchResults.classList.add('active');
+    }
+
+    searchInput.addEventListener('input', (e) => {
+      const query = e.target.value;
+
+      if (query.length > 0) {
+        searchClear.style.display = 'block';
+        const results = searchLinks(query);
+        renderSearchResults(results);
+      } else {
+        searchClear.style.display = 'none';
+        searchResults.classList.remove('active');
+      }
+    });
+
+    searchInput.addEventListener('focus', () => {
+      if (searchInput.value.length > 0) {
+        const results = searchLinks(searchInput.value);
+        renderSearchResults(results);
+      }
+    });
+
+    searchClear.addEventListener('click', () => {
+      searchInput.value = '';
+      searchClear.style.display = 'none';
+      searchResults.classList.remove('active');
+      searchInput.focus();
+    });
+
+    // Close search results when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.search-container')) {
+        searchResults.classList.remove('active');
+      }
+    });
+
+    // Keyboard shortcut: Cmd/Ctrl + K to focus search
+    document.addEventListener('keydown', (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        searchInput.focus();
+      }
+      // Escape to clear search
+      if (e.key === 'Escape') {
+        searchInput.value = '';
+        searchClear.style.display = 'none';
+        searchResults.classList.remove('active');
+        searchInput.blur();
+      }
+    });
+  </script>
+</body>
+
+</html>

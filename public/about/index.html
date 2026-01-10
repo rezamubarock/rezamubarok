@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Profil Reza Mubarok - Edisi Khusus Warta Kehidupan">
+    
+    <!-- Favicon (Ikon Tab) menggunakan SVG inline agar tidak perlu file terpisah -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📰</text></svg>">
+
+    <title>Profil Reza Mubarok - The Daily Chronicle</title>
+    
+    <!-- Google Fonts: Menggunakan UnifrakturMaguntia untuk judul koran klasik -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --paper-color: #f4f1ea;
+            --ink-color: #2c2c2c;
+            --accent-color: #8b0000; /* Merah Marun pudar */
+            --border-color: #4a4a4a;
+        }
+
+        /* Reset & Base Styles */
+        * { box-sizing: border-box; }
+
+        body {
+            background-color: #222; /* Latar belakang gelap di luar kertas */
+            font-family: 'Merriweather', serif; /* Font tubuh berita yang mudah dibaca */
+            color: var(--ink-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Ubah ke start agar scroll nyaman */
+            min-height: 100vh;
+        }
+
+        /* Efek Kertas Koran */
+        .newspaper {
+            background-color: var(--paper-color);
+            width: 100%;
+            max-width: 1000px;
+            padding: 40px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.6);
+            position: relative;
+            margin-bottom: 40px;
+            
+            /* Tekstur kertas halus */
+            background-image: 
+                repeating-linear-gradient(to right, transparent 0 100%, #e6e0d0 100px 101px),
+                repeating-linear-gradient(to bottom, transparent 0 100%, #e6e0d0 100px 101px);
+        }
+
+        /* Seleksi teks warna khas koran */
+        ::selection {
+            background: rgba(139, 0, 0, 0.2);
+            color: #000;
+        }
+
+        /* --- Header Section --- */
+        .head-branding {
+            text-align: center;
+            border-bottom: 3px double var(--border-color);
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+
+        .brand-name {
+            font-family: 'UnifrakturMaguntia', cursive; /* Font gaya Blackletter/Gothic */
+            font-size: 4rem;
+            color: #1a1a1a;
+            margin: 0;
+            line-height: 1.2;
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+        }
+
+        .meta-info {
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+            padding: 8px 0;
+            margin-top: 15px;
+            font-family: 'Playfair Display', serif;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        /* --- Main Article Layout --- */
+        .main-headline {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.2rem;
+            font-weight: 900;
+            line-height: 1;
+            text-align: center;
+            margin: 30px 0 15px 0;
+            color: #111;
+        }
+
+        .sub-headline {
+            font-family: 'Merriweather', serif;
+            font-size: 1.3rem;
+            font-style: italic;
+            text-align: center;
+            color: #444;
+            margin-bottom: 30px;
+            font-weight: 300;
+            max-width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .article-meta {
+            text-align: center;
+            font-size: 0.85rem;
+            font-weight: bold;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .article-meta::before, .article-meta::after {
+            content: "—";
+            color: var(--border-color);
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr; /* Rasio kolom kiri:kanan */
+            gap: 40px;
+            align-items: start;
+        }
+
+        /* --- Sidebar / Image Area --- */
+        .sidebar {
+            text-align: center;
+            position: sticky;
+            top: 20px;
+        }
+
+        .photo-frame {
+            border: 1px solid #333;
+            padding: 6px;
+            background: white;
+            box-shadow: 4px 4px 0 rgba(0,0,0,0.15);
+            margin-bottom: 15px;
+        }
+
+        .photo-placeholder {
+            width: 100%;
+            aspect-ratio: 3/4; /* Rasio foto potret */
+            background-color: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            filter: grayscale(100%) contrast(110%);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Efek Halftone (Titik-titik cetak koran) */
+        .photo-placeholder::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: radial-gradient(circle, #000 1px, transparent 1.2px);
+            background-size: 4px 4px;
+            opacity: 0.15;
+            pointer-events: none;
+        }
+
+        .caption {
+            font-family: 'Playfair Display', serif;
+            font-size: 0.85rem;
+            font-style: italic;
+            text-align: left;
+            margin-top: 8px;
+            line-height: 1.4;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 15px;
+        }
+
+        /* --- Text Columns --- */
+        .text-content {
+            /* Membuat teks mengalir dalam 2 kolom di layar lebar */
+            column-count: 2;
+            column-gap: 30px;
+            text-align: justify;
+            font-size: 1.05rem;
+            line-height: 1.7;
+        }
+
+        .drop-cap {
+            float: left;
+            font-family: 'UnifrakturMaguntia', cursive;
+            font-size: 4.8rem;
+            line-height: 0.8;
+            margin-right: 12px;
+            margin-top: 2px;
+            color: var(--accent-color);
+        }
+
+        .pull-quote {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-style: italic;
+            text-align: center;
+            margin: 25px 0;
+            padding: 20px 0;
+            border-top: 3px double var(--ink-color);
+            border-bottom: 3px double var(--ink-color);
+            line-height: 1.3;
+            break-inside: avoid; /* Mencegah kutipan terpotong antar kolom */
+            color: #111;
+        }
+
+        p {
+            margin-bottom: 20px;
+        }
+
+        /* --- Footer --- */
+        .footer-note {
+            margin-top: 60px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 15px;
+            text-align: center;
+            font-size: 0.8rem;
+            font-style: italic;
+            color: #666;
+        }
+
+        /* --- Responsive Design (Mobile Friendly) --- */
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .newspaper { padding: 20px; }
+            .brand-name { font-size: 2.5rem; }
+            .meta-info { font-size: 0.7rem; flex-wrap: wrap; justify-content: center; gap: 10px; }
+            
+            .content-grid { 
+                grid-template-columns: 1fr; /* Satu kolom di HP */
+                gap: 20px;
+            }
+            
+            .text-content { 
+                column-count: 1; /* Teks tidak berkolom di HP */
+            }
+            
+            .main-headline { font-size: 2.2rem; }
+            .sidebar { position: static; } /* Sidebar tidak sticky di HP */
+            .pull-quote { font-size: 1.3rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="newspaper">
+        <!-- Header Koran -->
+        <header class="head-branding">
+            <h1 class="brand-name">Warta Kehidupan</h1>
+            <div class="meta-info">
+                <span>Edisi Khusus Tokoh</span>
+                <span>Jakarta, Indonesia</span>
+                <span>Harga: Tak Ternilai</span>
+            </div>
+        </header>
+
+        <!-- Judul Utama -->
+        <article>
+            <h2 class="main-headline">LOGIKA SANG PEMECAH TEKA-TEKI</h2>
+            <h3 class="sub-headline">Sebuah Profil tentang Reza Mubarok: Dari Masa Lalu yang Kelam Menuju Kemanfaatan Logis</h3>
+            
+            <div class="article-meta">
+                Oleh Wartawan Senior &bull; Rubrik Inspirasi
+            </div>
+
+            <div class="content-grid">
+                
+                <!-- Kolom Kiri: Foto / Ilustrasi -->
+                <aside class="sidebar">
+                    <div class="photo-frame">
+                        <div class="photo-placeholder">
+                            <!-- SVG Icon: Kombinasi Simbol Coding & Hati -->
+                            <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="#222" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+                                <!-- Monitor -->
+                                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                                <line x1="8" y1="21" x2="16" y2="21"></line>
+                                <line x1="12" y1="17" x2="12" y2="21"></line>
+                                <!-- Heart Symbol inside screen -->
+                                <path d="M7 8.5C7 7 8 6 9.5 6S12 7.5 12 7.5 13 6 14.5 6 17 7 17 8.5c0 2.5-5 6-5 6s-5-3.5-5-6z" fill="#8b0000" stroke="none" opacity="0.6"/>
+                                <!-- Code lines -->
+                                <line x1="6" y1="14" x2="18" y2="14" stroke-opacity="0.3"></line>
+                            </svg>
+                            <span style="margin-top:15px; font-family:'Playfair Display'; font-weight:bold; letter-spacing:1px; font-size:0.9rem;">REZA MUBAROK</span>
+                        </div>
+                    </div>
+                    <div class="caption">
+                        <strong>SOSOK LOGIS.</strong> Reza Mubarok, seorang pengembang aplikasi yang menemukan kedamaian dalam logika pemrograman, mendedikasikan hasil kerjanya untuk kebahagiaan keluarga.
+                    </div>
+                </aside>
+
+                <!-- Kolom Kanan: Teks Artikel -->
+                <div class="text-content">
+                    <p>
+                        <span class="drop-cap">D</span>i dunia yang seringkali tidak masuk akal, Reza Mubarok menemukan ketenangannya justru di antara baris-baris kode. Bagi Reza, <i>coding</i> bukanlah pekerjaan klerikal yang membosankan ataupun repetitif. Itu adalah sebuah permainan, sebuah teka-teki raksasa di mana setiap masalah memiliki solusi yang logis. Sebuah kemewahan yang jarang ditawarkan oleh kehidupan nyata.
+                    </p>
+
+                    <p>
+                        Namun, Reza yang duduk di hadapan saya hari ini, sosok pemecah masalah yang kritis dan logis, bukanlah Reza di masa lalu.
+                    </p>
+
+                    <p>
+                        "Dulu ada masa suram," akunya terbuka. Ia tidak ragu menggambarkan dirinya sebagai anak yang cenderung nakal, jauh dari citra 'anak baik'. Hidupnya sempat berjalan tanpa arah yang jelas. Hingga akhirnya, sebuah titik balik yang hening namun mengguncang terjadi, yaitu kepergian Sang Ayah.
+                    </p>
+
+                    <div class="pull-quote">
+                        "Saya jadi merasa hidup itu cuma sebentar, sehingga saya tidak mau menyia-nyiakan hidup."
+                    </div>
+
+                    <p>
+                        Tidak ada drama berlebih saat itu. Hanya sebuah kesadaran yang tiba-tiba menyergap tentang betapa singkatnya waktu, serta sebuah pesan sederhana yang terus terngiang, "Doakan Ayah."
+                    </p>
+
+                    <p>
+                        Kalimat itu mengubah segalanya. Anak nakal itu dipaksa dewasa oleh keadaan. Ia menyadari bahwa hidup terlalu berharga untuk disia-siakan begitu saja. Reza pun mulai membangun ulang dirinya, kali ini dengan fondasi yang lebih kokoh, yakni logika dan tanggung jawab.
+                    </p>
+
+                    <p>
+                        Kini, sebagai seorang pengembang aplikasi, Reza tidak mengejar kemewahan pribadi semata. Baginya, uang hanyalah alat konversi. Ia mengubah deretan angka biner menjadi dinding dan atap, menjadi sebuah rumah sederhana untuk keluarganya.
+                    </p>
+
+                    <p>
+                        "Aku lihat Ibuku tersenyum, Isteriku juga bahagia," ujarnya. Matanya berbinar saat menceritakan bagaimana sebagian besar penghasilannya habis untuk orang-orang di sekelilingnya, dan hanya menyisakan porsi kecil untuk dirinya sendiri.
+                    </p>
+
+                    <p>
+                        Reza Mubarok mungkin mendefinisikan dirinya sebagai seorang <i>problem solver</i> yang mencintai logika. Namun, di akhir percakapan kami, saya menemukan ironi yang indah. Pria yang paling membenci hal-hal tak masuk akal ini justru mendedikasikan hidupnya untuk satu hal yang seringkali tak butuh logika sama sekali, yaitu cinta untuk keluarga.
+                    </p>
+                    
+                    <p>
+                        Ia memecahkan masalah dengan otak, namun ia menjalani hidup dengan hati.
+                    </p>
+                </div>
+            </div>
+        </article>
+
+        <div class="footer-note">
+            Dicetak terbatas untuk arsip pribadi Reza Mubarok &copy; <script>document.write(new Date().getFullYear())</script>
+        </div>
+    </div>
+
+</body>
+</html>

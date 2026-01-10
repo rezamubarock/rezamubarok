@@ -1,0 +1,85 @@
+{
+    "categories": [
+        {
+            "name": "Youtube",
+            "icon": "♠️",
+            "items": [
+                {
+                    "title": "Wisdom Engine",
+                    "link": "https://gemini.google.com/share/a7c8739a0d76",
+                    "icon": "👴"
+                },
+                {
+                    "title": "Suno Engine",
+                    "link": "https://gemini.google.com/share/97f0c19151fa",
+                    "icon": "🎸"
+                },
+                {
+                    "title": "VideoClip Engine",
+                    "link": "https://gemini.google.com/share/30ae4c2a1f71",
+                    "icon": "🎬"
+                },
+                {
+                    "title": "Thumbnailer",
+                    "link": "https://gemini.google.com/share/3cae2ba08b89",
+                    "icon": "🖼️"
+                }
+            ]
+        },
+        {
+            "name": "App",
+            "icon": "♥️",
+            "items": [
+                {
+                    "title": "Coming Soon",
+                    "link": "#",
+                    "icon": "⚡"
+                }
+            ]
+        },
+        {
+            "name": "Tiktok",
+            "icon": "♣️",
+            "items": [
+                {
+                    "title": "MIA",
+                    "link": "https://gemini.google.com/share/8869c5191c75",
+                    "icon": "👓"
+                }
+            ]
+        },
+        {
+            "name": "Other",
+            "icon": "🎮",
+            "items": [
+                {
+                    "title": "Mastering",
+                    "link": "https://masteraudio.pro/mastering",
+                    "icon": "🎹"
+                }
+            ]
+        }
+    ],
+    "dock": [
+        {
+            "title": "Home",
+            "link": "#",
+            "icon": "🏠"
+        },
+        {
+            "title": "About",
+            "link": "/about",
+            "icon": "ℹ️"
+        },
+        {
+            "title": "Game",
+            "link": "/game",
+            "icon": "☕"
+        },
+        {
+            "title": "Contact",
+            "link": "mailto:admin@rezamubarok.com",
+            "icon": "✉️"
+        }
+    ]
+}
