@@ -2,7 +2,7 @@
     "categories": [
         {
             "name": "Youtube",
-            "icon": "♠️",
+            "icon": "🎥",
             "items": [
                 {
                     "title": "Wisdom Engine",
@@ -15,8 +15,8 @@
                     "icon": "🎸"
                 },
                 {
-                    "title": "VideoClip Engine",
-                    "link": "https://gemini.google.com/share/30ae4c2a1f71",
+                    "title": "MusicClip Engine",
+                    "link": "https://gemini.google.com/share/49376d74c5b7",
                     "icon": "🎬"
                 },
                 {
@@ -28,7 +28,7 @@
         },
         {
             "name": "App",
-            "icon": "♥️",
+            "icon": "📱",
             "items": [
                 {
                     "title": "Coming Soon",
@@ -39,7 +39,7 @@
         },
         {
             "name": "Tiktok",
-            "icon": "♣️",
+            "icon": "🪩",
             "items": [
                 {
                     "title": "MIA",
@@ -50,7 +50,7 @@
         },
         {
             "name": "Other",
-            "icon": "🎮",
+            "icon": "⚔️",
             "items": [
                 {
                     "title": "Mastering",
@@ -74,7 +74,7 @@
         {
             "title": "Game",
             "link": "/game",
-            "icon": "☕"
+            "icon": "🎮"
         },
         {
             "title": "Contact",
